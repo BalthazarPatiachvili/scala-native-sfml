@@ -6,12 +6,12 @@ import scalanative.unsafe.*
 import internal.graphics.Transformable.*
 import system.Vector2
 
-class Transformable private[sfml] (private val transformable: Resource[sfTransformable]):
+class Transformable private[sfml] (private val transformable: ResourceBuffer[sfTransformable]):
 
     private[sfml] inline def toNativeTransformable: Ptr[sfTransformable] = transformable.ptr
 
     def this() =
-        this(Resource { (r: Ptr[sfTransformable]) => ctor(r) })
+        this(ResourceBuffer { (r: Ptr[sfTransformable]) => ctor(r) })
 
     final def move(offsetX: Float, offsetY: Float): Unit =
         sfTransformable_move(toNativeTransformable, offsetX, offsetY)

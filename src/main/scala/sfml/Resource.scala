@@ -4,8 +4,10 @@ import scalanative.runtime.*
 import scalanative.unsafe.*
 import scalanative.unsigned.UnsignedRichInt
 
+trait Resource extends AutoCloseable
+
 @SuppressWarnings(scala.Array("org.wartremover.warts.Nothing"))
-private[sfml] final class Resource[T: Tag] private (buffer: Either[Ptr[T], ByteArray]):
+private[sfml] final class ResourceBuffer[T: Tag] private (buffer: Either[Ptr[T], ByteArray]):
 
     private[sfml] def this(ctor: Ptr[T] => Unit) =
         this(Right(ByteArray.alloc(sizeof[T].toInt)))

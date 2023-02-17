@@ -8,10 +8,10 @@ import internal.graphics.Text.*
 
 import system.String.toNativeString
 
-class Text private[sfml] (private val text: Resource[sfText])
-    extends Transformable(Resource(text.ptr.at2))
+class Text private[sfml] (private val text: ResourceBuffer[sfText])
+    extends Transformable(ResourceBuffer(text.ptr.at2))
     with Drawable
-    with AutoCloseable:
+    with Resource:
 
     private[sfml] inline def toNativeText: Ptr[sfText] = text.ptr
 
@@ -21,10 +21,10 @@ class Text private[sfml] (private val text: Resource[sfText])
         graphics.VertexArray.close(text.ptr.at6)()
 
     def this() =
-        this(Resource { (r: Ptr[sfText]) => ctor(r) })
+        this(ResourceBuffer { (r: Ptr[sfText]) => ctor(r) })
 
     def this(string: String, font: Font, characterSize: Int = 30) =
-        this(Resource { (r: Ptr[sfText]) =>
+        this(ResourceBuffer { (r: Ptr[sfText]) =>
             Zone { implicit z => ctor(r, string.toNativeString, font.toNativeFont, characterSize.toUInt) }
         })
 

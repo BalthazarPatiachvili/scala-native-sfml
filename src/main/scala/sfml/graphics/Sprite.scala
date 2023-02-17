@@ -7,15 +7,17 @@ import scalanative.unsigned.UnsignedRichInt
 import internal.Type.booleanToSfBool
 import internal.graphics.Sprite.*
 
-class Sprite private[sfml] (private val sprite: Resource[sfSprite]) extends Transformable(Resource(sprite.ptr.at2)) with Drawable:
+class Sprite private[sfml] (private val sprite: ResourceBuffer[sfSprite])
+    extends Transformable(ResourceBuffer(sprite.ptr.at2))
+    with Drawable:
 
     private[sfml] inline def toNativeSprite: Ptr[sfSprite] = sprite.ptr
 
     def this() =
-        this(Resource { (r: Ptr[sfSprite]) => ctor(r) })
+        this(ResourceBuffer { (r: Ptr[sfSprite]) => ctor(r) })
 
     def this(texture: Texture) =
-        this(Resource { (r: Ptr[sfSprite]) =>
+        this(ResourceBuffer { (r: Ptr[sfSprite]) =>
             Zone { implicit z => ctor(r, texture.toNativeTexture) }
         })
 

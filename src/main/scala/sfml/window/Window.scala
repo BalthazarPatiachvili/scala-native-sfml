@@ -10,7 +10,7 @@ import internal.window.Window.*
 
 import system.String.toNativeString
 
-class Window private[sfml] (private val window: Resource[sfWindow]) extends AutoCloseable:
+class Window private[sfml] (private val window: ResourceBuffer[sfWindow]) extends Resource:
 
     private[sfml] inline def toNativeWindow: Ptr[sfWindow] = window.ptr
 
@@ -18,7 +18,7 @@ class Window private[sfml] (private val window: Resource[sfWindow]) extends Auto
         sfWindow_close(toNativeWindow)
 
     def this(mode: VideoMode, title: String, style: Style, settings: ContextSettings) =
-        this(Resource { (r: Ptr[sfWindow]) =>
+        this(ResourceBuffer { (r: Ptr[sfWindow]) =>
             Zone { implicit z =>
                 val modeSplit = split(mode.toNativeVideoMode)
 

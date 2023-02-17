@@ -9,7 +9,7 @@ import internal.window.Window.sfWindow
 import system.{String, Vector2}
 import window.{ContextSettings, VideoMode, Window}
 
-trait RenderTarget private[sfml] (private val renderTarget: Resource[sfRenderTarget]):
+trait RenderTarget private[sfml] (private val renderTarget: ResourceBuffer[sfRenderTarget]):
 
     private[sfml] inline def toNativeRenderTarget: Ptr[sfRenderTarget] = renderTarget.ptr
 
@@ -22,7 +22,7 @@ trait RenderTarget private[sfml] (private val renderTarget: Resource[sfRenderTar
         drawable.draw(this, states)
 
     final def mapPixelToCoords(point: Vector2[Int]): Vector2[Float] =
-        mapPixelToCoords(point, View(Resource(sfRenderTarget_getView(toNativeRenderTarget))))
+        mapPixelToCoords(point, View(ResourceBuffer(sfRenderTarget_getView(toNativeRenderTarget))))
 
     final def mapPixelToCoords(point: Vector2[Int], view: View): Vector2[Float] =
         val viewport_rect = viewport(view)

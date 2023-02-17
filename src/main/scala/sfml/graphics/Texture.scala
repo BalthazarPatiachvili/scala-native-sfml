@@ -9,7 +9,7 @@ import internal.graphics.Texture.*
 import graphics.Rect
 import stdlib.String.toNativeStdString
 
-class Texture private[sfml] (private val texture: Resource[sfTexture]) extends AutoCloseable:
+class Texture private[sfml] (private val texture: ResourceBuffer[sfTexture]) extends Resource:
 
     private[sfml] inline def toNativeTexture: Ptr[sfTexture] = texture.ptr
 
@@ -17,7 +17,7 @@ class Texture private[sfml] (private val texture: Resource[sfTexture]) extends A
         Texture.close(toNativeTexture)()
 
     def this() =
-        this(Resource { (r: Ptr[sfTexture]) => ctor(r) })
+        this(ResourceBuffer { (r: Ptr[sfTexture]) => ctor(r) })
 
     final def loadFromFile(filename: String, area: Rect[Int] = Rect()): Boolean =
         Zone { implicit z => sfTexture_loadFromFile(toNativeTexture, filename.toNativeStdString, area.toNativeRect) }

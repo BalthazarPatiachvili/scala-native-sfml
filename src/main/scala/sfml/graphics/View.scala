@@ -6,22 +6,22 @@ import scalanative.unsafe.*
 import internal.graphics.View.*
 import system.Vector2
 
-class View private[sfml] (private val view: Resource[sfView]):
+class View private[sfml] (private val view: ResourceBuffer[sfView]):
 
     private[sfml] inline def toNativeView: Ptr[sfView] = view.ptr
 
     def this() =
-        this(Resource { (r: Ptr[sfView]) => ctor(r) })
+        this(ResourceBuffer { (r: Ptr[sfView]) => ctor(r) })
 
     def this(center: Vector2[Float], size: Vector2[Float]) =
-        this(Resource { (r: Ptr[sfView]) =>
+        this(ResourceBuffer { (r: Ptr[sfView]) =>
             Zone { implicit z =>
                 ctor(r, center.toNativeVector2, size.toNativeVector2)
             }
         })
 
     def this(rectangle: Rect[Float]) =
-        this(Resource { (r: Ptr[sfView]) =>
+        this(ResourceBuffer { (r: Ptr[sfView]) =>
             Zone { implicit z =>
                 ctor(r, rectangle.toNativeRect)
             }
