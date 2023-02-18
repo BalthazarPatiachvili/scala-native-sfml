@@ -51,11 +51,40 @@ object Vector2:
         private[sfml] def toVector2Float(): Vector2[Float] =
             Vector2(vector2._1, vector2._2)
 
-    extension (vector2: internal.Type.sfSplit[sfVector2i])
-        private[sfml] def toVector2Int(): Vector2[Int] =
-            val high = (vector2 >> 32).toInt
-            val low = vector2.toInt
-            Vector2(low, high)
+    private[sfml] def toVector2Int()(
+        callback: CFuncPtr0[sfVector2i]
+    )(using Zone): Vector2[Int] =
+        ReturnTypeHandler(sfVector2i_typeHandler, callback)().toVector2Int()
+
+    private[sfml] def toVector2Int[T1: Tag](arg1: T1)(
+        callback: CFuncPtr1[Ptr[CStruct1[T1]], sfVector2i]
+    )(using Zone): Vector2[Int] =
+        ReturnTypeHandler(sfVector2i_typeHandler, callback)(arg1).toVector2Int()
+
+    private[sfml] def toVector2Int[T1: Tag, T2: Tag](arg1: T1, arg2: T2)(
+        callback: CFuncPtr1[Ptr[CStruct2[T1, T2]], sfVector2i]
+    )(using Zone): Vector2[Int] =
+        ReturnTypeHandler(sfVector2i_typeHandler, callback)(arg1, arg2).toVector2Int()
+
+    private[sfml] def toVector2Int[T1: Tag, T2: Tag, T3: Tag](arg1: T1, arg2: T2, arg3: T3)(
+        callback: CFuncPtr1[Ptr[CStruct3[T1, T2, T3]], sfVector2i]
+    )(using Zone): Vector2[Int] =
+        ReturnTypeHandler(sfVector2i_typeHandler, callback)(arg1, arg2, arg3).toVector2Int()
+
+    private[sfml] def toVector2Float()(
+        callback: CFuncPtr0[sfVector2f]
+    )(using Zone): Vector2[Float] =
+        ReturnTypeHandler(sfVector2f_typeHandler, callback)().toVector2Float()
+
+    private[sfml] def toVector2Float[T1: Tag](arg1: T1)(
+        callback: CFuncPtr1[Ptr[CStruct1[T1]], sfVector2f]
+    )(using Zone): Vector2[Float] =
+        ReturnTypeHandler(sfVector2f_typeHandler, callback)(arg1).toVector2Float()
+
+    private[sfml] def toVector2Float[T1: Tag, T2: Tag](arg1: T1, arg2: T2)(
+        callback: CFuncPtr1[Ptr[CStruct2[T1, T2]], sfVector2f]
+    )(using Zone): Vector2[Float] =
+        ReturnTypeHandler(sfVector2f_typeHandler, callback)(arg1, arg2).toVector2Float()
 
     private[sfml] def toVector2Float[T1: Tag, T2: Tag, T3: Tag](arg1: T1, arg2: T2, arg3: T3)(
         callback: CFuncPtr1[Ptr[CStruct3[T1, T2, T3]], sfVector2f]
