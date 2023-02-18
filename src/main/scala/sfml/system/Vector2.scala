@@ -12,7 +12,7 @@ import internal.system.Vector2.*
 final case class Vector2[T: Numeric](val x: T = 0, val y: T = 0):
 
     @targetName("toNative_sfVector2f")
-    private[sfml] inline def toNativeVector2(using Zone)(implicit ev: T =:= Float): Ptr[sfVector2f] =
+    private[sfml] inline def toNativeVector2(using Zone)(using T =:= Float): Ptr[sfVector2f] =
         val vector2 = alloc[sfVector2f]()
 
         vector2._1 = x
@@ -20,21 +20,32 @@ final case class Vector2[T: Numeric](val x: T = 0, val y: T = 0):
         vector2
 
     @targetName("toNative_sfVector2i")
-    private[sfml] inline def toNativeVector2(using Zone)(implicit ev: T =:= Int): Ptr[sfVector2i] =
+    private[sfml] inline def toNativeVector2(using Zone)(using T =:= Int): Ptr[sfVector2i] =
         val vector2 = alloc[sfVector2i]()
 
         vector2._1 = x
         vector2._2 = y
         vector2
 
+    def unary_- =
+        Vector2(-x, -y)
+
     def +(rhs: Vector2[T]) =
         Vector2(x + rhs.x, y + rhs.y)
+
+    def -(rhs: Vector2[T]) =
+        Vector2(x - rhs.x, y - rhs.y)
 
     def *(rhs: Vector2[T]) =
         Vector2(x * rhs.x, y * rhs.y)
 
     def *(rhs: T) =
         Vector2(x * rhs, y * rhs)
+
+    def /(rhs: Vector2[T])(using Fractional[T]) =
+        import math.Fractional.Implicits.infixFractionalOps
+
+        Vector2(x / rhs.x, y / rhs.y)
 
 object Vector2:
     implicit def tupleToVector2Float[T: Numeric](tuple: (T, T)): Vector2[Float] =
