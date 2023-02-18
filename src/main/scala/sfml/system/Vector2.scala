@@ -37,6 +37,12 @@ final case class Vector2[T: Numeric](val x: T = 0, val y: T = 0):
         Vector2(x * rhs, y * rhs)
 
 object Vector2:
+    implicit def tupleToVector2Float[T: Numeric](tuple: (T, T)): Vector2[Float] =
+        Vector2(tuple._1.toFloat, tuple._2.toFloat)
+
+    implicit def tupleToVector2Int[T: Numeric](tuple: (T, T)): Vector2[Int] =
+        Vector2(tuple._1.toInt, tuple._2.toInt)
+
     extension (vector2: Ptr[sfVector2i])
         private[sfml] def toVector2Int(): Vector2[Int] =
             Vector2(vector2._1, vector2._2)
@@ -51,8 +57,7 @@ object Vector2:
             val low = vector2.toInt
             Vector2(low, high)
 
-    implicit def tupleToVector2Float[T: Numeric](tuple: (T, T)): Vector2[Float] =
-        Vector2(tuple._1.toFloat, tuple._2.toFloat)
-
-    implicit def tupleToVector2Int[T: Numeric](tuple: (T, T)): Vector2[Int] =
-        Vector2(tuple._1.toInt, tuple._2.toInt)
+    private[sfml] def toVector2Float[T1: Tag, T2: Tag, T3: Tag](arg1: T1, arg2: T2, arg3: T3)(
+        callback: CFuncPtr1[Ptr[CStruct3[T1, T2, T3]], sfVector2f]
+    )(using Zone): Vector2[Float] =
+        ReturnTypeHandler(sfVector2f_typeHandler, callback)(arg1, arg2, arg3).toVector2Float()

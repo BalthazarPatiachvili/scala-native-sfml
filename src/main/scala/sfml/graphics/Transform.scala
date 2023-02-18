@@ -88,16 +88,11 @@ final case class Transform private[sfml] (val matrix: Array[Float]):
     def translate(offset: Vector2[Float]): Transform =
         translate(offset.x, offset.y)
 
-    @SuppressWarnings(Array("org.wartremover.warts.All"))
     def transformPoint(x: Float, y: Float): Vector2[Float] =
         Zone { implicit z =>
-            val vector = alloc[internal.system.Vector2.sfVector2f]()
-
-            ReturnTypeHandler(internal.system.Vector2.sfVector2f_typeHandler)(vector, toNativeTransform, x, y) {
-                (data: Ptr[CStruct3[sfTransform, CFloat, CFloat]]) => sfTransform_transformPoint(data._1, data._2, data._3)
+            Vector2.toVector2Float(toNativeTransform, x, y) { (data: Ptr[CStruct3[sfTransform, CFloat, CFloat]]) =>
+                sfTransform_transformPoint(data._1, data._2, data._3)
             }
-
-            Vector2(vector._1, vector._2)
         }
 
     def transformPoint(point: Vector2[Float]): Vector2[Float] =
