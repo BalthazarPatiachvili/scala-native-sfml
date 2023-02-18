@@ -34,4 +34,8 @@ class RenderWindow private[sfml] (private val renderWindow: ResourceBuffer[sfRen
         this(mode, title, Style.Default)
 
     override def size: Vector2[Int] =
-        Zone { implicit z => Vector2.toVector2Int(sfRenderWindow_getSize(toNativeRenderWindow))() }
+        Zone { implicit z =>
+            Vector2.toVector2Int(toNativeRenderWindow) { (data: Ptr[CStruct1[Ptr[sfRenderWindow]]]) =>
+                sfRenderWindow_getSize(data._1)
+            }
+        }
