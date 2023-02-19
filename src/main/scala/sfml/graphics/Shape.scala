@@ -10,11 +10,18 @@ import system.Vector2
 
 abstract class Shape private[sfml] (private val shape: ResourceBuffer[sfShape])
     extends Transformable(ResourceBuffer(shape.ptr.at2))
-    with Drawable:
+    with Drawable
+    with Resource:
 
     private[sfml] inline def toNativeShape: Ptr[sfShape] = shape.ptr
 
-    def point(index: Int): Vector2[Float]
+    override def close(): Unit =
+        Shape.close(toNativeShape)()
+
+    override final def draw(target: RenderTarget, states: RenderStates): Unit =
+        Zone { implicit z => RenderTarget.patch_draw(toNativeShape.at1, target, states) }
+
+    def point(index: Long): Vector2[Float]
 
     def pointCount: Long
 
@@ -52,3 +59,8 @@ abstract class Shape private[sfml] (private val shape: ResourceBuffer[sfShape])
 
     final def textureRect_=(rect: Rect[Int]): Unit =
         Zone { implicit z => sfShape_setTextureRect(toNativeShape, rect.toNativeRect) }
+
+object Shape:
+    extension (shape: Ptr[sfShape])
+        private[sfml] def close(): Unit =
+            dtor(shape)
