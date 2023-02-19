@@ -13,7 +13,7 @@ import system.Vector2
 
 final case class Rect[T: Numeric](val left: T = 0, val top: T = 0, val width: T = 0, val height: T = 0):
 
-    @targetName("toNative_sfFloatRect")
+    @targetName("toNativeFloatRect")
     private[sfml] inline def toNativeRect(using Zone)(implicit ev: T =:= Float): Ptr[sfFloatRect] =
         val rect = alloc[sfFloatRect]()
 
@@ -23,7 +23,7 @@ final case class Rect[T: Numeric](val left: T = 0, val top: T = 0, val width: T 
         rect._4 = height
         rect
 
-    @targetName("toNative_sfIntRect")
+    @targetName("toNativeIntRect")
     private[sfml] inline def toNativeRect(using Zone)(implicit ev: T =:= Int): Ptr[sfIntRect] =
         val rect = alloc[sfIntRect]()
 
@@ -80,3 +80,43 @@ object Rect:
 
     implicit def tupleToRectInt[T: Numeric](tuple: (T, T, T, T)): Rect[Int] =
         Rect(tuple._1.toInt, tuple._2.toInt, tuple._3.toInt, tuple._4.toInt)
+
+    private[sfml] def toRectInt()(
+        callback: CFuncPtr0[sfIntRect]
+    )(using Zone): Rect[Int] =
+        ReturnTypeHandler(sfIntRect_typeHandler, callback)().toRectInt()
+
+    private[sfml] def toRectInt[T1: Tag](arg1: T1)(
+        callback: CFuncPtr1[Ptr[CStruct1[T1]], sfIntRect]
+    )(using Zone): Rect[Int] =
+        ReturnTypeHandler(sfIntRect_typeHandler, callback)(arg1).toRectInt()
+
+    private[sfml] def toRectInt[T1: Tag, T2: Tag](arg1: T1, arg2: T2)(
+        callback: CFuncPtr1[Ptr[CStruct2[T1, T2]], sfIntRect]
+    )(using Zone): Rect[Int] =
+        ReturnTypeHandler(sfIntRect_typeHandler, callback)(arg1, arg2).toRectInt()
+
+    private[sfml] def toRectInt[T1: Tag, T2: Tag, T3: Tag](arg1: T1, arg2: T2, arg3: T3)(
+        callback: CFuncPtr1[Ptr[CStruct3[T1, T2, T3]], sfIntRect]
+    )(using Zone): Rect[Int] =
+        ReturnTypeHandler(sfIntRect_typeHandler, callback)(arg1, arg2, arg3).toRectInt()
+
+    private[sfml] def toRectFloat()(
+        callback: CFuncPtr0[sfFloatRect]
+    )(using Zone): Rect[Float] =
+        ReturnTypeHandler(sfFloatRect_typeHandler, callback)().toRectFloat()
+
+    private[sfml] def toRectFloat[T1: Tag](arg1: T1)(
+        callback: CFuncPtr1[Ptr[CStruct1[T1]], sfFloatRect]
+    )(using Zone): Rect[Float] =
+        ReturnTypeHandler(sfFloatRect_typeHandler, callback)(arg1).toRectFloat()
+
+    private[sfml] def toRectFloat[T1: Tag, T2: Tag](arg1: T1, arg2: T2)(
+        callback: CFuncPtr1[Ptr[CStruct2[T1, T2]], sfFloatRect]
+    )(using Zone): Rect[Float] =
+        ReturnTypeHandler(sfFloatRect_typeHandler, callback)(arg1, arg2).toRectFloat()
+
+    private[sfml] def toRectFloat[T1: Tag, T2: Tag, T3: Tag](arg1: T1, arg2: T2, arg3: T3)(
+        callback: CFuncPtr1[Ptr[CStruct3[T1, T2, T3]], sfFloatRect]
+    )(using Zone): Rect[Float] =
+        ReturnTypeHandler(sfFloatRect_typeHandler, callback)(arg1, arg2, arg3).toRectFloat()

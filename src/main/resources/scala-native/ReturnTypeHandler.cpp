@@ -9,3 +9,13 @@ void glue_returnTypeHandler(sf::Vector2f & vector, sf::Vector2f (*callback)(void
 {
     vector = callback(data);
 }
+
+void glue_returnTypeHandler(sf::IntRect & rect, sf::IntRect (*callback)(void *), void * data)
+{
+    rect = callback(data);
+}
+
+void glue_returnTypeHandler(sf::FloatRect & rect, sf::FloatRect (*callback)(void *), void * data)
+{
+    rect = callback(data);
+}
