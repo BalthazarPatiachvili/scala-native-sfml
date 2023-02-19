@@ -61,10 +61,10 @@ import system.Vector2
     def sfView_setSize(self: Ptr[sfView], size: Ptr[Vector2.sfVector2f]): Unit = extern
 
     @name("_ZNK2sf4View12getTransformEv")
-    def sfView_getTransform(self: Ptr[sfView]): Transform.sfTransform = extern
+    def sfView_getTransform(self: Ptr[sfView]): Ptr[Transform.sfTransform] = extern
 
     @name("_ZNK2sf4View19getInverseTransformEv")
-    def sfView_getInverseTransform(self: Ptr[sfView]): Transform.sfTransform = extern
+    def sfView_getInverseTransform(self: Ptr[sfView]): Ptr[Transform.sfTransform] = extern
 
     @name("_ZNK2sf4View11getViewportEv")
     def sfView_getViewport(self: Ptr[sfView]): Ptr[Rect.sfFloatRect] = extern
