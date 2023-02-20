@@ -24,6 +24,7 @@ SiteScaladoc / siteSubdirName := ""
 ThisBuild / wartremoverErrors := Warts.allBut(
     Wart.AsInstanceOf,
     Wart.DefaultArguments,
+    Wart.Equals,
     Wart.ImplicitConversion,
     Wart.ImplicitParameter,
     Wart.Overloading
