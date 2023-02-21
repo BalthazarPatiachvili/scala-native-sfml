@@ -94,3 +94,23 @@ class Text private[sfml] (private val text: ResourceBuffer[sfText])
 
     final def string_=(string: String) =
         Zone { implicit z => sfText_setString(toNativeText, string.toNativeString) }
+
+object Text:
+    extension (text: Immutable[Text])
+        def globalBounds: Rect[Float] = text.get.globalBounds
+
+        def localBounds: Rect[Float] = text.get.localBounds
+
+        def characterSize: Int = text.get.characterSize
+
+        def color: Color = text.get.color
+
+        def fillColor: Color = text.get.fillColor
+
+        def letterSpacing: Float = text.get.letterSpacing
+
+        def lineSpacing: Float = text.get.lineSpacing
+
+        def outlineColor: Color = text.get.outlineColor
+
+        def outlineThickness: Float = text.get.outlineThickness

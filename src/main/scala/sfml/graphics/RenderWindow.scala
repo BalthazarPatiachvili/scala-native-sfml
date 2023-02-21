@@ -39,3 +39,6 @@ class RenderWindow private[sfml] (private val renderWindow: ResourceBuffer[sfRen
                 sfRenderWindow_getSize(data._1)
             }
         }
+
+object RenderWindow:
+    extension (renderWindow: Immutable[RenderWindow]) def size: Vector2[Int] = renderWindow.get.size

@@ -13,10 +13,10 @@ class TestTransform:
     @Test def constructorMatrix3x3(): Unit =
         val transform = Transform(10, 11, 12, 13, 14, 15, 16, 17, 18)
 
-        assertArrayEquals(Array[Float](10, 13, 0, 16, 11, 14, 0, 17, 0, 0, 1, 0, 12, 15, 0, 18), transform.matrix, 0)
+        assertArrayEquals(Array[Float](10, 13, 0, 16, 11, 14, 0, 17, 0, 0, 1, 0, 12, 15, 0, 18), transform.matrix.toArray, 0)
 
     @Test def identityMatrix(): Unit =
-        assertArrayEquals(Array[Float](1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), Transform.Identity().matrix, 0)
+        assertArrayEquals(Array[Float](1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1), Transform.Identity().matrix.toArray, 0)
 
     @Test def transformPoint(): Unit =
         assertEquals(Vector2[Float](-10, -10), Transform.Identity().transformPoint((-10, -10)))
@@ -65,15 +65,15 @@ class TestTransform:
 
     @Test def rotateAroundOrigin(): Unit =
         assertArrayEquals(
-            Transform(0, -1, 0, 1, 0, 0, 0, 0, 1).matrix.map(_.toDouble),
-            Transform().rotate(90).matrix.map(_.toDouble),
+            Transform(0, -1, 0, 1, 0, 0, 0, 0, 1).matrix.map(_.toDouble).toArray,
+            Transform().rotate(90).matrix.map(_.toDouble).toArray,
             0.01
         )
 
     @Test def rotateAroundCustomPoint(): Unit =
         assertArrayEquals(
-            Transform(0, -1, 1, 1, 0, -1, 0, 0, 1).matrix.map(_.toDouble),
-            Transform().rotate(90, (1, 0)).matrix.map(_.toDouble),
+            Transform(0, -1, 1, 1, 0, -1, 0, 0, 1).matrix.map(_.toDouble).toArray,
+            Transform().rotate(90, (1, 0)).matrix.map(_.toDouble).toArray,
             0.01
         )
 

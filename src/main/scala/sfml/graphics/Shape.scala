@@ -18,6 +18,9 @@ abstract class Shape private[sfml] (private val shape: ResourceBuffer[sfShape])
     override def close(): Unit =
         Shape.close(toNativeShape)()
 
+    protected def this() =
+        this(ResourceBuffer { (r: Ptr[sfShape]) => ctor(r) })
+
     override final def draw(target: RenderTarget, states: RenderStates): Unit =
         Zone { implicit z => RenderTarget.patch_draw(toNativeShape.at1, target, states) }
 
@@ -61,6 +64,11 @@ abstract class Shape private[sfml] (private val shape: ResourceBuffer[sfShape])
         Zone { implicit z => sfShape_setTextureRect(toNativeShape, rect.toNativeRect) }
 
 object Shape:
+    extension (shape: Immutable[Shape])
+        def point(index: Long): Vector2[Float] = shape.get.point(index)
+
+        def pointCount: Long = shape.get.pointCount
+
     extension (shape: Ptr[sfShape])
         private[sfml] def close(): Unit =
             dtor(shape)

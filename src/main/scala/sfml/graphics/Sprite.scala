@@ -39,7 +39,7 @@ class Sprite private[sfml] (private val sprite: ResourceBuffer[sfSprite])
 
         Rect(0, 0, width, height)
 
-    // NOTE: To be able to use [`font_=`]
+    // NOTE: To be able to use [`texture_=`]
     final def texture = ()
 
     final def texture_=(texture: Texture, resetRect: Boolean = false) =
@@ -50,3 +50,14 @@ class Sprite private[sfml] (private val sprite: ResourceBuffer[sfSprite])
 
     final def textureRect_=(rect: Rect[Int]): Unit =
         Zone { implicit z => sfSprite_setTextureRect(toNativeSprite, rect.toNativeRect) }
+
+object Sprite:
+    extension (sprite: Immutable[Sprite])
+        def draw(target: RenderTarget, states: RenderStates): Unit =
+            sprite.get.draw(target, states)
+
+        def color: Color = sprite.get.color
+
+        def globalBounds: Rect[Float] = sprite.get.globalBounds
+
+        def localBounds: Rect[Float] = sprite.get.localBounds

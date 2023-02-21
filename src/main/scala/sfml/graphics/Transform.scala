@@ -1,6 +1,8 @@
 package sfml
 package graphics
 
+import scala.collection.immutable.ArraySeq
+
 import scalanative.unsafe.*
 
 import internal.Type.sfBoolToBoolean
@@ -34,10 +36,10 @@ final class Transform private[sfml] (private val transform: ResourceBuffer[sfTra
     final def combine(rhs: Transform): Transform =
         Transform.toTransform(sfTransform_combine(toNativeTransform, rhs.toNativeTransform))()
 
-    final def matrix: Array[Float] =
+    final def matrix: ArraySeq[Float] =
         val matrix = !toNativeTransform
 
-        Array.tabulate(16)(matrix(_))
+        ArraySeq.tabulate(16)(matrix(_))
 
     final def rotate(angle: Float): Transform =
         Transform.toTransform(sfTransform_rotate(toNativeTransform, angle))()

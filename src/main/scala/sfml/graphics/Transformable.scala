@@ -68,3 +68,17 @@ class Transformable private[sfml] (private val transformable: ResourceBuffer[sfT
 
     final def inverseTransform(): Transform =
         Transform.toTransform(sfTransformable_getInverseTransform(toNativeTransformable))()
+
+object Transformable:
+    extension (transformable: Immutable[Transformable])
+        def origin: Vector2[Float] = transformable.get.origin
+
+        def position: Vector2[Float] = transformable.get.position
+
+        def rotation: Float = transformable.get.rotation
+
+        def scale: Vector2[Float] = transformable.get.scale
+
+        def transform: Transform = transformable.get.transform
+
+        def inverseTransform(): Transform = transformable.get.inverseTransform()

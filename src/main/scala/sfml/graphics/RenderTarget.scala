@@ -56,3 +56,13 @@ object RenderTarget:
     private[sfml] def patch_draw(self: Ptr[sfDrawable], target: RenderTarget, states: RenderStates)(using Zone): Unit =
         // NOTE: Use this endpoint to avoid us splitting `states` in the stack
         sfRenderTarget_draw(target.toNativeRenderTarget, self, states.toNativeRenderStates)
+
+    extension (renderTarget: Immutable[RenderTarget])
+        def mapPixelToCoords(point: Vector2[Int]): Vector2[Float] =
+            renderTarget.get.mapPixelToCoords(point)
+
+        def mapPixelToCoords(point: Vector2[Int], view: View): Vector2[Float] =
+            renderTarget.get.mapPixelToCoords(point, view)
+
+        def viewport(view: View): Rect[Int] =
+            renderTarget.get.viewport(view)
