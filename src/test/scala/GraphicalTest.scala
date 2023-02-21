@@ -15,7 +15,7 @@ trait GraphicalTest:
     private def cleanup() =
         execute(Array("rm", "-rf", s"${snTestScreen.folderPath}/cxx", s"${snTestScreen.folderPath}/scala"))
 
-    @SuppressWarnings(Array("org.wartremover.warts.All"))
+    @SuppressWarnings(Array("org.wartremover.warts.PlatformDefault"))
     private def execute(command: Array[String]): Unit =
         val process = Runtime.getRuntime.exec(command)
         val exitCode = process.waitFor()
@@ -23,7 +23,7 @@ trait GraphicalTest:
         assertEquals(Source.fromInputStream(process.getErrorStream).mkString(""), 0, process.waitFor())
 
     @Before
-    @SuppressWarnings(Array("org.wartremover.warts.All"))
+    @SuppressWarnings(Array("org.wartremover.warts.Return"))
     final def __init(): Unit =
         // NOTE: Currently, cannot pass arguments to JUnit -> Use environment variable instead
         // Source: junit-runtime/src/main/scala/scala/scalanative/junit/JUnitFramework.scala
@@ -36,7 +36,7 @@ trait GraphicalTest:
         execute(Array("mkdir", "-p", s"${snTestScreen.folderPath}/cxx", s"${snTestScreen.folderPath}/scala"))
 
     @After
-    @SuppressWarnings(Array("org.wartremover.warts.All"))
+    @SuppressWarnings(Array("org.wartremover.warts.Return"))
     final def __teardown(): Unit =
         if sys.env.get("SNSFML_SCREENSHOT_FOLDER_PATH").isEmpty then return ()
 
