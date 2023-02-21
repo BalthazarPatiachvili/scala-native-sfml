@@ -11,7 +11,7 @@ import internal.graphics.Rect.*
 
 import system.Vector2
 
-final case class Rect[T: Numeric](val left: T = 0, val top: T = 0, val width: T = 0, val height: T = 0):
+final case class Rect[T: Numeric](val left: T, val top: T, val width: T, val height: T):
 
     @targetName("toNativeFloatRect")
     private[sfml] inline def toNativeRect(using Zone)(implicit ev: T =:= Float): Ptr[sfFloatRect] =
@@ -67,6 +67,11 @@ final case class Rect[T: Numeric](val left: T = 0, val top: T = 0, val width: T 
         interLeft < interRight && interTop < interBottom
 
 object Rect:
+    def apply[T: Numeric](): Rect[T] =
+        val zero = Numeric[T].zero
+
+        Rect(zero, zero, zero, zero)
+
     extension (rect: Ptr[sfIntRect])
         private[sfml] def toRectInt(): Rect[Int] =
             Rect(rect._1, rect._2, rect._3, rect._4)

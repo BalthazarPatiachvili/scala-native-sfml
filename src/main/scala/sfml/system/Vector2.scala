@@ -9,7 +9,7 @@ import scalanative.unsafe.*
 
 import internal.system.Vector2.*
 
-final case class Vector2[T: Numeric](val x: T = 0, val y: T = 0):
+final case class Vector2[T: Numeric](val x: T, val y: T):
 
     @targetName("toNative_sfVector2f")
     private[sfml] inline def toNativeVector2(using Zone)(using T =:= Float): Ptr[sfVector2f] =
@@ -48,6 +48,11 @@ final case class Vector2[T: Numeric](val x: T = 0, val y: T = 0):
         Vector2(x / rhs.x, y / rhs.y)
 
 object Vector2:
+    def apply[T: Numeric](): Vector2[T] =
+        val zero = Numeric[T].zero
+
+        Vector2(zero, zero)
+
     implicit def tupleToVector2Float[T: Numeric](tuple: (T, T)): Vector2[Float] =
         Vector2(tuple._1.toFloat, tuple._2.toFloat)
 
