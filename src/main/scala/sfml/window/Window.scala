@@ -57,7 +57,6 @@ class Window private[sfml] (private val window: ResourceBuffer[sfWindow]) extend
     final def mouseCursorVisible_=(visible: Boolean) =
         sfWindow_setMouseCursorVisible(toNativeWindow, visible)
 
-    @SuppressWarnings(Array("org.wartremover.warts.OptionPartial"))
     final def pollEvent(): LazyList[Event] =
         def polling(event: Ptr[sfEvent]): Option[Event] =
             if sfWindow_pollEvent(toNativeWindow, event) then { Event(event) }
@@ -66,7 +65,10 @@ class Window private[sfml] (private val window: ResourceBuffer[sfWindow]) extend
         Zone { implicit z =>
             val event = alloc[sfEvent]()
 
-            LazyList.continually(polling(event)).takeWhile(_.isDefined).map(_.get)
+            LazyList.unfold(polling(event)) {
+                case Some(e) => Option(e -> polling(event))
+                case None    => None
+            }
         }
 
     // NOTE: To be able to use [`verticalSync_=`]
