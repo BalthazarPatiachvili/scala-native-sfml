@@ -14,9 +14,6 @@ import scalanative.unsafe.*
     @name("_ZN2sf6SpriteC2ERKNS_7TextureE")
     def ctor(self: Ptr[sfSprite], texture: Ptr[Texture.sfTexture]): Unit = extern
 
-    @name("_ZNK2sf6Sprite4drawERNS_12RenderTargetENS_12RenderStatesE")
-    def sfSprite_draw(self: Ptr[sfSprite], target: Ptr[RenderTarget.sfRenderTarget], states: RenderStates.sfRenderStates): Unit = extern
-
     @name("_ZNK2sf6Sprite8getColorEv")
     def sfSprite_getColor(self: Ptr[sfSprite]): Ptr[Color.sfColor] = extern
 
