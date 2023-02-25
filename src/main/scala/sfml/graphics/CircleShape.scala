@@ -25,3 +25,12 @@ class CircleShape private[sfml] (private val circleShape: ResourceBuffer[sfCircl
 
     override final def pointCount: Long =
         sfCircleShape_getPointCount(toNativeCircleShape).toLong
+
+    final def pointCount_=(count: Long) =
+        sfCircleShape_setPointCount(toNativeCircleShape, count.toULong)
+
+    final def radius: Float =
+        sfCircleShape_getRadius(toNativeCircleShape)
+
+    final def radius_=(radius: Float): Unit =
+        sfCircleShape_setRadius(toNativeCircleShape, radius)

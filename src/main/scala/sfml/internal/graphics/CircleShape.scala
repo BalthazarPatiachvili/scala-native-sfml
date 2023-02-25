@@ -24,3 +24,12 @@ import system.Vector2
 
     @name("_ZNK2sf11CircleShape13getPointCountEv")
     def sfCircleShape_getPointCount(self: Ptr[sfCircleShape]): CSize = extern
+
+    @name("_ZN2sf11CircleShape13setPointCountEm")
+    def sfCircleShape_setPointCount(self: Ptr[sfCircleShape], count: CSize): CSize = extern
+
+    @name("_ZNK2sf11CircleShape9getRadiusEv")
+    def sfCircleShape_getRadius(self: Ptr[sfCircleShape]): CFloat = extern
+
+    @name("_ZN2sf11CircleShape9setRadiusEf")
+    def sfCircleShape_setRadius(self: Ptr[sfCircleShape], radius: CFloat): Unit = extern
