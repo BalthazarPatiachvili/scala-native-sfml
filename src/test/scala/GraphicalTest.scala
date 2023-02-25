@@ -1,15 +1,9 @@
 import scala.io.Source
 
-import scalanative.unsafe.*
-
 import org.junit.Assert.*
 import org.junit.{After, Assume, Before}
 
-@extern object LSAN:
-    @name("__lsan_do_recoverable_leak_check")
-    def leak_check(): CInt = extern
-
-trait GraphicalTest:
+trait GraphicalTest extends NativeTest:
     val snTestScreen = TestScreen()
 
     private def cleanup() =
@@ -24,7 +18,7 @@ trait GraphicalTest:
 
     @Before
     @SuppressWarnings(Array("org.wartremover.warts.Return"))
-    final def __init(): Unit =
+    def __init(): Unit =
         // NOTE: Currently, cannot pass arguments to JUnit -> Use environment variable instead
         // Source: junit-runtime/src/main/scala/scala/scalanative/junit/JUnitFramework.scala
         sys.env.get("SNSFML_SCREENSHOT_FOLDER_PATH") match
@@ -37,13 +31,13 @@ trait GraphicalTest:
 
     @After
     @SuppressWarnings(Array("org.wartremover.warts.Return"))
-    final def __teardown(): Unit =
+    override def __teardown(): Unit =
+        super.__teardown()
+
         if sys.env.get("SNSFML_SCREENSHOT_FOLDER_PATH").isEmpty then return ()
 
         // NOTE: Currently, cannot use JUnit's rules to retrieve the test name -> Use of `testName` variable
         assertTrue("test name not set", snTestScreen.testName != "")
-
-        assertTrue("memory leaked", LSAN.leak_check() == 0)
 
         execute(Array("./target/cxx/scala-native-sfml-test-out", s"${snTestScreen.folderPath}/cxx", snTestScreen.testName))
 
