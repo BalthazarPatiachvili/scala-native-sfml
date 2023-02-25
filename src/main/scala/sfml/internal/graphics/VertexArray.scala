@@ -4,10 +4,12 @@ package graphics
 
 import scalanative.unsafe.*
 
+import stdlib.Vector
+
 @link("sfml-graphics")
 @extern private[sfml] object VertexArray:
     type sfVertexArray = CStruct3[
         CArray[Byte, Nat._8],
-        Ptr[Byte],
-        CArray[Byte, Nat.Digit2[Nat._2, Nat._4]]
+        Vector.stdVector,
+        CArray[Byte, Nat._8]
     ]
