@@ -5,7 +5,7 @@ import sfml.graphics.*
 import sfml.system.*
 
 /* Tests based on: https://github.com/SFML/SFML/blob/master/test/Graphics/Transform.test.cpp */
-class TestTransform:
+class TransformTest extends NativeTest:
 
     @Test def constructorDefault(): Unit =
         assertEquals(Transform.Identity(), Transform())

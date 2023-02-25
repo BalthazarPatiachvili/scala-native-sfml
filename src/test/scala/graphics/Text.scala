@@ -6,21 +6,17 @@ import scala.util.Using
 import sfml.graphics.*
 import sfml.window.*
 
-class TestText:
-    val font = Font()
-
-    @Before def init(): Unit =
-        font.loadFromFile("src/test/resources/tuffy.ttf")
-
+class TextTest:
     @Test def getGlobalBounds(): Unit =
-        val text = Using(Text("Hello, world!", font, 50)) { text =>
-            assertEquals(Rect[Float](3, 13, 244, 43), text.globalBounds)
+        Using(Font()) { font =>
+            font.loadFromFile("src/test/resources/tuffy.ttf")
+
+            Using(Text("Hello, world!", font, 50)) { text =>
+                assertEquals(Rect[Float](3, 13, 244, 43), text.globalBounds)
+            }
         }
 
-    @After def teardown(): Unit =
-        font.close()
-
-class GraphicalText extends GraphicalTest:
+class TextGraphicalTest extends GraphicalTest:
     @Test def graphicalTest(): Unit =
         snTestScreen.testName = "Text"
 

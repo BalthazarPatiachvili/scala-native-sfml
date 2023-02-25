@@ -2,12 +2,11 @@ import org.junit.Assert.*
 import org.junit.Test
 
 import sfml.graphics.*
-import sfml.window.*
 
 /* Tests based on: https://github.com/SFML/SFML/blob/master/test/Graphics/BlendMode.test.cpp */
-class ConstructorBlendMode:
+class BlendModeTest extends NativeTest:
 
-    @Test def default(): Unit =
+    @Test def constructor_default(): Unit =
         val blendMode = BlendMode()
 
         assertEquals(BlendMode.Factor.SrcAlpha, blendMode.colorSrcFactor)
@@ -17,7 +16,7 @@ class ConstructorBlendMode:
         assertEquals(BlendMode.Factor.OneMinusSrcAlpha, blendMode.alphaDstFactor)
         assertEquals(BlendMode.Equation.Add, blendMode.alphaEquation)
 
-    @Test def combinedColorAlphaDefaultParameter(): Unit =
+    @Test def constructor_combinedColorAlphaDefaultParameter(): Unit =
         val blendMode = BlendMode(BlendMode.Factor.Zero, BlendMode.Factor.SrcColor)
 
         assertEquals(BlendMode.Factor.Zero, blendMode.colorSrcFactor)
@@ -27,7 +26,7 @@ class ConstructorBlendMode:
         assertEquals(BlendMode.Factor.SrcColor, blendMode.alphaDstFactor)
         assertEquals(BlendMode.Equation.Add, blendMode.alphaEquation)
 
-    @Test def combinedColorAlpha(): Unit =
+    @Test def constructor_combinedColorAlpha(): Unit =
         val blendMode = BlendMode(BlendMode.Factor.Zero, BlendMode.Factor.SrcColor, BlendMode.Equation.ReverseSubtract)
 
         assertEquals(BlendMode.Factor.Zero, blendMode.colorSrcFactor)
@@ -37,7 +36,7 @@ class ConstructorBlendMode:
         assertEquals(BlendMode.Factor.SrcColor, blendMode.alphaDstFactor)
         assertEquals(BlendMode.Equation.ReverseSubtract, blendMode.alphaEquation)
 
-    @Test def separateColorAlpha(): Unit =
+    @Test def constructor_separateColorAlpha(): Unit =
         val blendMode = BlendMode(
             BlendMode.Factor.Zero,
             BlendMode.Factor.SrcColor,
@@ -54,9 +53,7 @@ class ConstructorBlendMode:
         assertEquals(BlendMode.Factor.DstAlpha, blendMode.alphaDstFactor)
         assertEquals(BlendMode.Equation.Add, blendMode.alphaEquation)
 
-class ConstantsBlendMode:
-
-    @Test def blendAlpha(): Unit =
+    @Test def constants_blendAlpha(): Unit =
         assertEquals(BlendMode.Factor.SrcAlpha, BlendMode.Alpha().colorSrcFactor)
         assertEquals(BlendMode.Factor.OneMinusSrcAlpha, BlendMode.Alpha().colorDstFactor)
         assertEquals(BlendMode.Equation.Add, BlendMode.Alpha().colorEquation)
@@ -64,7 +61,7 @@ class ConstantsBlendMode:
         assertEquals(BlendMode.Factor.OneMinusSrcAlpha, BlendMode.Alpha().alphaDstFactor)
         assertEquals(BlendMode.Equation.Add, BlendMode.Alpha().alphaEquation)
 
-    @Test def blendAdd(): Unit =
+    @Test def constants_blendAdd(): Unit =
         assertEquals(BlendMode.Factor.SrcAlpha, BlendMode.Add().colorSrcFactor)
         assertEquals(BlendMode.Factor.One, BlendMode.Add().colorDstFactor)
         assertEquals(BlendMode.Equation.Add, BlendMode.Add().colorEquation)
@@ -72,7 +69,7 @@ class ConstantsBlendMode:
         assertEquals(BlendMode.Factor.One, BlendMode.Add().alphaDstFactor)
         assertEquals(BlendMode.Equation.Add, BlendMode.Add().alphaEquation)
 
-    @Test def blendMultiply(): Unit =
+    @Test def constants_blendMultiply(): Unit =
         assertEquals(BlendMode.Factor.DstColor, BlendMode.Multiply().colorSrcFactor)
         assertEquals(BlendMode.Factor.Zero, BlendMode.Multiply().colorDstFactor)
         assertEquals(BlendMode.Equation.Add, BlendMode.Multiply().colorEquation)
@@ -80,7 +77,7 @@ class ConstantsBlendMode:
         assertEquals(BlendMode.Factor.Zero, BlendMode.Multiply().alphaDstFactor)
         assertEquals(BlendMode.Equation.Add, BlendMode.Multiply().alphaEquation)
 
-    @Test def blendNone(): Unit =
+    @Test def constants_blendNone(): Unit =
         assertEquals(BlendMode.Factor.One, BlendMode.None().colorSrcFactor)
         assertEquals(BlendMode.Factor.Zero, BlendMode.None().colorDstFactor)
         assertEquals(BlendMode.Equation.Add, BlendMode.None().colorEquation)

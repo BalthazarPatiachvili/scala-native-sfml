@@ -3,7 +3,7 @@ import org.junit.Test
 import sfml.graphics.*
 import sfml.window.*
 
-class GraphicalSprite extends GraphicalTest:
+class SpriteGraphicalTest extends GraphicalTest:
     @Test def graphicalTest(): Unit =
         snTestScreen.testName = "Sprite"
 
