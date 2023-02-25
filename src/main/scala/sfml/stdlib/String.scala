@@ -11,12 +11,8 @@ import internal.stdlib.String.*
 private[sfml] object String:
 
     extension (string: Ptr[stdString])
-        @SuppressWarnings(Array("org.wartremover.warts.Null"))
         private[sfml] def close(): Unit =
-            if string._2.toLong > 3 then
-                free(string._1)
-                string._1 = null
-                string._2 = 0.toULong
+            dtor(string)
 
     private inline def convert(ansiString: java.lang.String, charSize: Int)(using Zone): Ptr[stdString] =
         val string = alloc[stdString]()
