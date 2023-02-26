@@ -11,7 +11,7 @@ import internal.system.Vector2.*
 
 final case class Vector2[T: Numeric](val x: T, val y: T):
 
-    @targetName("toNative_sfVector2f")
+    @targetName("toNative_PtrsfVector2f")
     private[sfml] inline def toNativeVector2(using Zone)(using T =:= Float): Ptr[sfVector2f] =
         val vector2 = alloc[sfVector2f]()
 
@@ -19,7 +19,11 @@ final case class Vector2[T: Numeric](val x: T, val y: T):
         vector2._2 = y
         vector2
 
-    @targetName("toNative_sfVector2i")
+    @targetName("toNative_sfVector2f")
+    private[sfml] inline def toNativeVector2(using Zone)(using T =:= Float): sfVector2f =
+        sfVector2f_fillHandler(toNativeVector2)
+
+    @targetName("toNative_PtrsfVector2i")
     private[sfml] inline def toNativeVector2(using Zone)(using T =:= Int): Ptr[sfVector2i] =
         val vector2 = alloc[sfVector2i]()
 
