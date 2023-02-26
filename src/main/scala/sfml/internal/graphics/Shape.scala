@@ -6,10 +6,13 @@ import scalanative.unsafe.*
 
 @link("sfml-graphics")
 @extern private[sfml] object Shape:
-    type sfShape = CStruct3[
+    type sfShape = CStruct6[
         Drawable.sfDrawable,
         Transformable.sfTransformable,
-        CArray[Byte, Nat.Digit3[Nat._1, Nat._5, Nat._2]]
+        CArray[Byte, Nat.Digit2[Nat._4, Nat._0]],
+        VertexArray.sfVertexArray,
+        VertexArray.sfVertexArray,
+        CArray[Byte, Nat.Digit2[Nat._3, Nat._2]]
     ]
 
     @name("_ZN2sf5ShapeC2Ev")
@@ -17,6 +20,12 @@ import scalanative.unsafe.*
 
     @name("_ZN2sf5ShapeD2Ev")
     def dtor(self: Ptr[sfShape]): Unit = extern
+
+    @name("_ZNK2sf5Shape15getGlobalBoundsEv")
+    def sfShape_getGlobalBounds(self: Ptr[sfShape]): Rect.sfFloatRect = extern
+
+    @name("_ZNK2sf5Shape14getLocalBoundsEv")
+    def sfShape_getLocalBounds(self: Ptr[sfShape]): Rect.sfFloatRect = extern
 
     @name("_ZN2sf5Shape6updateEv")
     def sfShape_update(self: Ptr[sfShape]): Unit = extern
@@ -40,6 +49,9 @@ import scalanative.unsafe.*
 
     @name("_ZN2sf5Shape19setOutlineThicknessEf")
     def sfShape_setOutlineThickness(self: Ptr[sfShape], thickness: Float): Unit = extern
+
+    @name("_ZNK2sf5Shape10getTextureEv")
+    def sfShape_getTexture(self: Ptr[sfShape]): Ptr[Texture.sfTexture] = extern
 
     @name("_ZN2sf5Shape10setTextureEPKNS_7TextureEb")
     def sfShape_setTexture(self: Ptr[sfShape], texture: Ptr[Texture.sfTexture], resetRect: Type.sfBool): Unit = extern

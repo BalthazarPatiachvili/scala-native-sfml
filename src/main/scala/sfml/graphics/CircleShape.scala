@@ -9,7 +9,7 @@ import internal.graphics.CircleShape.*
 import system.Vector2
 
 class CircleShape private[sfml] (private val circleShape: ResourceBuffer[sfCircleShape])
-    extends Shape(ResourceBuffer(circleShape.ptr.at1)):
+    extends Shape(AbstractResourceBuffer(circleShape.ptr.at1)):
 
     private[sfml] inline def toNativeCircleShape = circleShape.ptr
 

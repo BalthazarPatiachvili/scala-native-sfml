@@ -2,27 +2,63 @@ package sfml
 package graphics
 
 import scalanative.unsafe.*
+import scalanative.unsafe.CFuncPtr0.fromScalaFunction
+import scalanative.unsafe.CFuncPtr1.fromScalaFunction
+import scalanative.unsafe.CFuncPtr2.fromScalaFunction
+import scalanative.unsigned.UnsignedRichLong
 
 import internal.Type.booleanToSfBool
 import internal.graphics.Shape.*
 
 import system.Vector2
 
-abstract class Shape private[sfml] (private val shape: ResourceBuffer[sfShape])
-    extends Transformable(ResourceBuffer(shape.ptr.at2))
+import sfml.internal.system.Vector2.sfVector2f
+
+private val vtable = AbstractResourceBuffer.createVTable(
+    CFuncPtr.toPtr((ptr: Ptr[CStruct2[sfShape, Shape]]) => ptr._2.close()),
+    CFuncPtr.toPtr(() => println("Copy constructor not implemented for Shape, please report this in lafeychine/scala-native-sfml")),
+    CFuncPtr.toPtr(() => println("Move constructor not implemented for Shape, please report this in lafeychine/scala-native-sfml")),
+    CFuncPtr.toPtr((ptr: Ptr[CStruct2[sfShape, Shape]]) => ptr._2.pointCount.toULong),
+    CFuncPtr.toPtr((ptr: Ptr[CStruct2[sfShape, Shape]], index: CSize) => {
+        Zone { implicit z => ptr._2.point(index.toLong).toNativeVector2: sfVector2f }
+    })
+)
+
+@SuppressWarnings(Array("org.wartremover.warts.Null"))
+abstract class Shape private[sfml] (private val shape: AbstractResourceBuffer[sfShape])
+    extends Transformable(ResourceBuffer(shape.ptr(null).at2))
     with Drawable
     with Resource:
 
-    private[sfml] inline def toNativeShape: Ptr[sfShape] = shape.ptr
+    private[sfml] inline def toNativeShape: Ptr[sfShape] = shape.ptr(this)
+
+    protected def this() =
+        this(AbstractResourceBuffer(vtable) { (r: Ptr[sfShape]) =>
+            ctor(r)
+        })
+
+        /* NOTE: Added by this binding, as it is more revelant */
+        update()
 
     override def close(): Unit =
         Shape.close(toNativeShape)()
 
-    protected def this() =
-        this(ResourceBuffer { (r: Ptr[sfShape]) => ctor(r) })
-
     override final def draw(target: RenderTarget, states: RenderStates): Unit =
         Zone { implicit z => RenderTarget.patch_draw(toNativeShape.at1, target, states) }
+
+    final def globalBounds: Rect[Float] =
+        Zone { implicit z =>
+            Rect.toRectFloat(toNativeShape) { (data: Ptr[CStruct1[Ptr[sfShape]]]) =>
+                sfShape_getGlobalBounds(data._1)
+            }
+        }
+
+    final def localBounds: Rect[Float] =
+        Zone { implicit z =>
+            Rect.toRectFloat(toNativeShape) { (data: Ptr[CStruct1[Ptr[sfShape]]]) =>
+                sfShape_getLocalBounds(data._1)
+            }
+        }
 
     def point(index: Long): Vector2[Float]
 
@@ -51,8 +87,10 @@ abstract class Shape private[sfml] (private val shape: ResourceBuffer[sfShape])
     final def outlineThickness_=(thickness: Float): Unit =
         sfShape_setOutlineThickness(toNativeShape, thickness)
 
-    // NOTE: To be able to use [`texture_=`]
-    final def texture = ()
+    final def texture: Option[Immutable[Texture]] =
+        val ptr = sfShape_getTexture(toNativeShape)
+
+        if ptr == null then None else Option(Immutable(Texture(ResourceBuffer(ptr))))
 
     final def texture_=(texture: Texture, resetRect: Boolean = false) =
         Zone { implicit z => sfShape_setTexture(toNativeShape, texture.toNativeTexture, resetRect) }
@@ -64,6 +102,7 @@ abstract class Shape private[sfml] (private val shape: ResourceBuffer[sfShape])
         Zone { implicit z => sfShape_setTextureRect(toNativeShape, rect.toNativeRect) }
 
 object Shape:
+
     extension (shape: Immutable[Shape])
         def point(index: Long): Vector2[Float] = shape.get.point(index)
 
