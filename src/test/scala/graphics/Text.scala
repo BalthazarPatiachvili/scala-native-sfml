@@ -13,8 +13,8 @@ class TextTest:
 
             Using(Text("Hello, world!", font, 50)) { text =>
                 assertEquals(Rect[Float](3, 13, 244, 43), text.globalBounds)
-            }
-        }
+            }.get
+        }.get
 
 class TextGraphicalTest extends GraphicalTest:
     @Test def graphicalTest(): Unit =
@@ -47,4 +47,4 @@ class TextGraphicalTest extends GraphicalTest:
 
             // Teardown
             window.close()
-        }
+        }.get

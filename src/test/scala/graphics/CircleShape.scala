@@ -15,7 +15,7 @@ class CircleShapeTest extends NativeTest:
             assertEquals(30, circle.pointCount)
 
             for i <- 0 until 30 do assertEquals(Vector2[Float](0, 0), circle.point(i))
-        }
+        }.get
 
     @Test def constructorRadius(): Unit =
         val points = Array[Vector2[Float]](
@@ -58,7 +58,7 @@ class CircleShapeTest extends NativeTest:
             for i <- 0 until 30 do
                 assertEquals(points(i).x, circle.point(i).x, 0.0001f)
                 assertEquals(points(i).y, circle.point(i).y, 0.0001f)
-        }
+        }.get
 
     @Test def constructorRadiusAndPointCount(): Unit =
         val points = Array[Vector2[Float]](
@@ -79,7 +79,7 @@ class CircleShapeTest extends NativeTest:
             for i <- 0 until 8 do
                 assertEquals(points(i).x, circle.point(i).x, 0.0001f)
                 assertEquals(points(i).y, circle.point(i).y, 0.0001f)
-        }
+        }.get
 
     @Test def setRadius(): Unit =
         val points = Array[Vector2[Float]](
@@ -100,7 +100,7 @@ class CircleShapeTest extends NativeTest:
             for i <- 0 until 6 do
                 assertEquals(points(i).x, circle.point(i).x, 0.0001f)
                 assertEquals(points(i).y, circle.point(i).y, 0.0001f)
-        }
+        }.get
 
     @Test def setPointCount(): Unit =
         val points = Array[Vector2[Float]](
@@ -119,7 +119,7 @@ class CircleShapeTest extends NativeTest:
             for i <- 0 until 4 do
                 assertEquals(points(i).x, circle.point(i).x, 0.0001f)
                 assertEquals(points(i).y, circle.point(i).y, 0.0001f)
-        }
+        }.get
 
     @Test def equilateralTriangle(): Unit =
         val points = Array[Vector2[Float]](
@@ -135,4 +135,4 @@ class CircleShapeTest extends NativeTest:
             for i <- 0 until 3 do
                 assertEquals(points(i).x, circle.point(i).x, 0.0001f)
                 assertEquals(points(i).y, circle.point(i).y, 0.0001f)
-        }
+        }.get

@@ -34,4 +34,4 @@ class SpriteGraphicalTest extends GraphicalTest:
 
             // Teardown
             window.close()
-        }
+        }.get
