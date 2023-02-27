@@ -10,7 +10,7 @@ import sfml.system.*
 class CircleShapeTest extends NativeTest:
 
     @Test def constructorDefault(): Unit =
-        Using(CircleShape(0)) { circle =>
+        Using(CircleShape()) { circle =>
             assertEquals(0, circle.radius, 0)
             assertEquals(30, circle.pointCount)
 

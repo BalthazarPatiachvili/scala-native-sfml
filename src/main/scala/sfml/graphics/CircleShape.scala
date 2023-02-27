@@ -16,6 +16,9 @@ class CircleShape private[sfml] (private val circleShape: ResourceBuffer[sfCircl
     def this(radius: Float = 0, pointCount: Long = 30) =
         this(ResourceBuffer { (r: Ptr[sfCircleShape]) => ctor(r, radius, pointCount.toULong) })
 
+    def this() =
+        this(0, 30)
+
     override final def point(index: Long): Vector2[Float] =
         Zone { implicit z =>
             Vector2.toVector2Float(toNativeCircleShape, index.toULong) { (data: Ptr[CStruct2[Ptr[sfCircleShape], CSize]]) =>
