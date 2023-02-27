@@ -18,6 +18,9 @@ trait RenderTarget private[sfml] (private val renderTarget: ResourceBuffer[sfRen
             sfRenderTarget_clear(toNativeRenderTarget, color.toNativeColor)
         }
 
+    final def defaultView: Immutable[View] =
+        Immutable(View.toView(sfRenderTarget_getDefaultView(toNativeRenderTarget))())
+
     final def draw(drawable: Drawable, states: RenderStates = RenderStates()): Unit =
         drawable.draw(this, states)
 
@@ -33,9 +36,10 @@ trait RenderTarget private[sfml] (private val renderTarget: ResourceBuffer[sfRen
 
         view.inverseTransform().transformPoint(normalized)
 
-    final def view: Unit = ()
+    final def view: Immutable[View] =
+        Immutable(View.toView(sfRenderTarget_getView(toNativeRenderTarget))())
 
-    final def view_=(view: View): Unit =
+    final def view_=(view: Immutable[View]): Unit =
         sfRenderTarget_setView(toNativeRenderTarget, view.toNativeView)
 
     final def viewport(view: View): Rect[Int] =
