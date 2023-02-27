@@ -1,5 +1,6 @@
 package sfml
 
+import scalanative.libc.string.memcpy
 import scalanative.runtime.*
 import scalanative.unsafe.*
 import scalanative.unsigned.UnsignedRichInt
@@ -17,6 +18,14 @@ private[sfml] class ResourceBuffer[T: Tag] protected (buffer: Either[Ptr[T], Byt
         buffer match
             case Left(ptr)    => ptr
             case Right(array) => fromRawPtr(array.atRaw(0))
+
+private[sfml] object ResourceBuffer:
+
+    def shallow_copy[T: Tag](ptr: Ptr[T]): ResourceBuffer[T] =
+        ResourceBuffer[T]((r: Ptr[T]) => {
+            memcpy(r.asInstanceOf[Ptr[Byte]], ptr.asInstanceOf[Ptr[Byte]], sizeof[T])
+            ()
+        })
 
 private[sfml] class AbstractResourceBuffer[T: Tag] protected (buffer: Either[Ptr[T], ByteArray]):
 
