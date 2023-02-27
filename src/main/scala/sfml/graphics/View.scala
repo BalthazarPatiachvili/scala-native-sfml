@@ -68,11 +68,11 @@ class View private[sfml] (private val view: ResourceBuffer[sfView]):
     final def size_=(size: Vector2[Float]) =
         Zone { implicit z => sfView_setSize(toNativeView, size.toNativeVector2) }
 
-    final def transform: Transform =
-        Transform.toTransform(sfView_getTransform(toNativeView))()
+    final def transform: Immutable[Transform] =
+        Immutable(Transform.toTransform(sfView_getTransform(toNativeView))())
 
-    final def inverseTransform(): Transform =
-        Transform.toTransform(sfView_getInverseTransform(toNativeView))()
+    final def inverseTransform(): Immutable[Transform] =
+        Immutable(Transform.toTransform(sfView_getInverseTransform(toNativeView))())
 
     final def viewport: Rect[Float] =
         Rect.toRectFloat(sfView_getViewport(toNativeView))()

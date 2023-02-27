@@ -137,6 +137,18 @@ object Transform:
     def Identity(): Transform =
         Transform()
 
+    extension (transform: Immutable[Transform])
+        def matrix: ArraySeq[Float] = transform.get.matrix
+
+        def transformPoint(x: Float, y: Float): Vector2[Float] =
+            transform.get.transformPoint(x, y)
+
+        def transformPoint(point: Vector2[Float]): Vector2[Float] =
+            transform.get.transformPoint(point)
+
+        def transformRect(rectangle: Rect[Float]): Rect[Float] =
+            transform.get.transformRect(rectangle)
+
     extension (transform: sfTransform)
         private[sfml] def toTransform(): Transform =
             Transform(ResourceBuffer { (r: Ptr[sfTransform]) =>
