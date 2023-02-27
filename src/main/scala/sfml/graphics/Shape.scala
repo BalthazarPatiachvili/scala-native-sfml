@@ -86,12 +86,14 @@ abstract class Shape private[sfml] (private val shape: AbstractResourceBuffer[sf
         sfShape_setOutlineThickness(toNativeShape, thickness)
 
     final def texture: Option[Immutable[Texture]] =
-        val ptr = sfShape_getTexture(toNativeShape)
+        Option(sfShape_getTexture(toNativeShape)).map(texturePtr => Immutable(Texture.toTexture(texturePtr)))
 
-        if ptr == null then None else Option(Immutable(Texture(ResourceBuffer(ptr))))
+    final def texture_=(texture: Option[Immutable[Texture]], resetRect: Boolean = false) =
+        Zone { implicit z =>
+            val texturePtr = texture.map(_.toNativeTexture).orNull
 
-    final def texture_=(texture: Texture, resetRect: Boolean = false) =
-        Zone { implicit z => sfShape_setTexture(toNativeShape, texture.toNativeTexture, resetRect) }
+            sfShape_setTexture(toNativeShape, texturePtr, resetRect)
+        }
 
     final def textureRect: Rect[Int] =
         Rect.toRectInt(sfShape_getTextureRect(toNativeShape))()
