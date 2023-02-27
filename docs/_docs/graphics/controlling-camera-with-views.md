@@ -232,17 +232,35 @@ window.view = Immutable(view)
 
 // draw something to that view
 window.draw(some_sprite);
+
+// want to do visibility checks? retrieve the view
+val currentView = window.view
 ```
-<!-- TODO: Retrieve the view -->
 
 The view remains active until you set another one. This means that there is
 always a view which defines what appears in the target, and where it is drawn.
 If you don't explicitly set any view, the render-target uses its own default
 view, which matches its size 1:1. You can get the default view of a
-render-target with the `defaultView` function (feature not ported yet). This can
-be useful if you want to define your own view based on it, or restore it to draw
-fixed entities (like a GUI) on top of your scene. 
-<!-- TODO: Example with getDefaultView -->
+render-target with the [`defaultView`](sfml.graphics.RenderTarget.defaultView)
+getter. This can be useful if you want to define your own view based on it, or
+restore it to draw fixed entities (like a GUI) on top of your scene. 
+```scala
+//{
+import sfml.Immutable
+import sfml.graphics.{Rect, RenderWindow, Sprite, View}
+import sfml.window.VideoMode
+
+val window = RenderWindow(VideoMode(800, 600), "My window")
+
+//}
+// create a view half the size of the default view
+val view = window.defaultView.clone()
+view.zoom(0.5)
+window.view = Immutable(view)
+
+// restore the default view
+window.view = window.defaultView
+```
 
 <div class="warning">
 When you use <code>view</code> setter, the render-target makes a copy of the
@@ -276,6 +294,7 @@ for event <- window.pollEvent() do
     event match
         case Event.Resized(width, height) => 
             window.view = Immutable(View((0, 0, width, height)))
+        case _ => ()
 ```
 
 
