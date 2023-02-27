@@ -24,3 +24,9 @@ import system.Vector2
 
     @name("_ZNK2sf14RectangleShape13getPointCountEv")
     def sfRectangleShape_getPointCount(self: Ptr[sfRectangleShape]): CSize = extern
+
+    @name("_ZNK2sf14RectangleShape7getSizeEv")
+    def sfRectangleShape_getSize(self: Ptr[sfRectangleShape]): Ptr[Vector2.sfVector2f] = extern
+
+    @name("_ZN2sf14RectangleShape7setSizeERKNS_7Vector2IfEE")
+    def sfRectangleShape_setSize(self: Ptr[sfRectangleShape], size: Ptr[Vector2.sfVector2f]): Unit = extern

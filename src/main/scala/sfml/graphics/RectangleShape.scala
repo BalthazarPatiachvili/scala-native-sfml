@@ -18,6 +18,9 @@ class RectangleShape private[sfml] (private val circleShape: ResourceBuffer[sfRe
             Zone { implicit z => ctor(r, size.toNativeVector2) }
         })
 
+    def this() =
+        this(Vector2[Float]())
+
     override final def point(index: Long): Vector2[Float] =
         Zone { implicit z =>
             Vector2.toVector2Float(toNativeRectangleShape, index.toULong) { (data: Ptr[CStruct2[Ptr[sfRectangleShape], CSize]]) =>
@@ -27,3 +30,9 @@ class RectangleShape private[sfml] (private val circleShape: ResourceBuffer[sfRe
 
     override final def pointCount: Long =
         sfRectangleShape_getPointCount(toNativeRectangleShape).toLong
+
+    final def size: Vector2[Float] =
+        Vector2.toVector2Float(sfRectangleShape_getSize(toNativeRectangleShape))()
+
+    final def size_=(size: Vector2[Float]): Unit =
+        Zone { implicit z => sfRectangleShape_setSize(toNativeRectangleShape, size.toNativeVector2) }
