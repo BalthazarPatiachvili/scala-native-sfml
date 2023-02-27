@@ -216,6 +216,7 @@ the target to which you are drawing
 <!-- TODO: Add_sf::RenderTexture --> 
 ```scala
 //{
+import sfml.Immutable
 import sfml.graphics.{Rect, RenderWindow, Sprite, View}
 import sfml.window.VideoMode
 
@@ -227,7 +228,7 @@ val some_sprite = Sprite()
 val view = View((0, 0, 1000, 600))
 
 // activate it
-window.view = view
+window.view = Immutable(view)
 
 // draw something to that view
 window.draw(some_sprite);
@@ -263,6 +264,7 @@ depending on the new size of the window, all you have to do is update the size
 of the view with the size of the window. 
 ```scala
 //{
+import sfml.Immutable
 import sfml.graphics.{Rect, RenderWindow, View}
 import sfml.window.{Event, VideoMode}
 
@@ -273,7 +275,7 @@ val window = RenderWindow(VideoMode(800, 600), "My window")
 for event <- window.pollEvent() do
     event match
         case Event.Resized(width, height) => 
-            window.view = View((0, 0, width, height))
+            window.view = Immutable(View((0, 0, width, height)))
 ```
 
 

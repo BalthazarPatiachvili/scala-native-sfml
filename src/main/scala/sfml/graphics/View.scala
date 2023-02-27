@@ -79,3 +79,25 @@ class View private[sfml] (private val view: ResourceBuffer[sfView]):
 
     final def viewport_=(viewport: Rect[Float]): Unit =
         Zone { implicit z => sfView_setViewport(toNativeView, viewport.toNativeRect) }
+
+object View:
+
+    extension (view: Immutable[View])
+        private[sfml] inline def toNativeView: Ptr[sfView] = view.get.toNativeView
+
+        def center: Vector2[Float] = view.get.center
+
+        def rotation: Float = view.get.rotation
+
+        def size: Vector2[Float] = view.get.size
+
+        def viewport: Rect[Float] = view.get.viewport
+
+        def transform: Immutable[Transform] = view.get.transform
+
+        def inverseTransform(): Immutable[Transform] =
+            view.get.inverseTransform()
+
+    extension (view: Ptr[sfView])
+        private[sfml] def toView(): View =
+            View(ResourceBuffer(view))
