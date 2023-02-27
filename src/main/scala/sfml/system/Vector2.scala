@@ -11,7 +11,7 @@ import internal.system.Vector2.*
 
 final case class Vector2[T: Numeric](val x: T, val y: T):
 
-    @targetName("toNative_PtrsfVector2f")
+    @targetName("toNative_sfVector2f")
     private[sfml] inline def toNativeVector2(using Zone)(using T =:= Float): Ptr[sfVector2f] =
         val vector2 = alloc[sfVector2f]()
 
@@ -19,11 +19,7 @@ final case class Vector2[T: Numeric](val x: T, val y: T):
         vector2._2 = y
         vector2
 
-    @targetName("toNative_sfVector2f")
-    private[sfml] inline def toNativeVector2(using Zone)(using T =:= Float): sfVector2f =
-        sfVector2f_fillHandler(toNativeVector2)
-
-    @targetName("toNative_PtrsfVector2i")
+    @targetName("toNative_sfVector2i")
     private[sfml] inline def toNativeVector2(using Zone)(using T =:= Int): Ptr[sfVector2i] =
         val vector2 = alloc[sfVector2i]()
 
@@ -67,9 +63,15 @@ object Vector2:
         private[sfml] def toVector2Int(): Vector2[Int] =
             Vector2(vector2._1, vector2._2)
 
+        private[sfml] def toInlineVector2i: sfVector2i =
+            sfVector2i_inlineHandler(vector2)
+
     extension (vector2: Ptr[sfVector2f])
         private[sfml] def toVector2Float(): Vector2[Float] =
             Vector2(vector2._1, vector2._2)
+
+        private[sfml] def toInlineVector2f: sfVector2f =
+            sfVector2f_inlineHandler(vector2)
 
     private[sfml] def toVector2Int()(
         callback: CFuncPtr0[sfVector2i]

@@ -12,15 +12,13 @@ import internal.graphics.Shape.*
 
 import system.Vector2
 
-import sfml.internal.system.Vector2.sfVector2f
-
 private val vtable = AbstractResourceBuffer.createVTable(
     CFuncPtr.toPtr((ptr: Ptr[CStruct2[sfShape, Shape]]) => ptr._2.close()),
     CFuncPtr.toPtr(() => println("Copy constructor not implemented for Shape, please report this in lafeychine/scala-native-sfml")),
     CFuncPtr.toPtr(() => println("Move constructor not implemented for Shape, please report this in lafeychine/scala-native-sfml")),
     CFuncPtr.toPtr((ptr: Ptr[CStruct2[sfShape, Shape]]) => ptr._2.pointCount.toULong),
     CFuncPtr.toPtr((ptr: Ptr[CStruct2[sfShape, Shape]], index: CSize) => {
-        Zone { implicit z => ptr._2.point(index.toLong).toNativeVector2: sfVector2f }
+        Vector2.toInlineVector2f(Zone { implicit z => ptr._2.point(index.toLong).toNativeVector2 })
     })
 )
 
