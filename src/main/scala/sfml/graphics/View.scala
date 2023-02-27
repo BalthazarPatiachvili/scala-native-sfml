@@ -27,6 +27,9 @@ class View private[sfml] (private val view: ResourceBuffer[sfView]):
             }
         })
 
+    override def clone(): View =
+        View(Zone { implicit z => ResourceBuffer.shallow_copy(view.ptr) })
+
     final def move(offsetX: Float, offsetY: Float): Unit =
         sfView_move(toNativeView, offsetX, offsetY)
 
@@ -84,6 +87,9 @@ object View:
 
     extension (view: Immutable[View])
         private[sfml] inline def toNativeView: Ptr[sfView] = view.get.toNativeView
+
+        def clone(): View =
+            view.get.clone()
 
         def center: Vector2[Float] = view.get.center
 
