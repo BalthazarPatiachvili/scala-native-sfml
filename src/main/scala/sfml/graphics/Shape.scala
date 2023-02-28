@@ -14,8 +14,8 @@ import system.Vector2
 
 private val vtable = AbstractResourceBuffer.createVTable(
     CFuncPtr.toPtr((ptr: Ptr[CStruct2[sfShape, Shape]]) => ptr._2.close()),
-    CFuncPtr.toPtr(() => println("Copy constructor not implemented for Shape, please report this in lafeychine/scala-native-sfml")),
-    CFuncPtr.toPtr(() => println("Move constructor not implemented for Shape, please report this in lafeychine/scala-native-sfml")),
+    CFuncPtr.toPtr(() => println("Method not implemented for Shape, please report this issue in lafeychine/scala-native-sfml")),
+    Resolver.findFunctionPointer(("_ZNK2sf5Shape4drawERNS_12RenderTargetENS_12RenderStatesE" + 0.toChar).getBytes().at(0)),
     CFuncPtr.toPtr((ptr: Ptr[CStruct2[sfShape, Shape]]) => ptr._2.pointCount.toULong),
     CFuncPtr.toPtr((ptr: Ptr[CStruct2[sfShape, Shape]], index: CSize) => {
         Vector2.toInlineVector2f(Zone { implicit z => ptr._2.point(index.toLong).toNativeVector2 })
