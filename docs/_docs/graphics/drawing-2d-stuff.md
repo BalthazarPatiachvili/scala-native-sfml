@@ -97,5 +97,5 @@ Although they share some common properties, each of these entities come with
 their own nuances and are therefore explained in dedicated tutorials:
   - [Sprite tutorial](sprites-and-textures.html)
   - [Text tutorial](text-and-fonts.html)
-  - Shape tutorial (feature not ported yet)
+  - [Shape tutorial](shapes.html)
   - Vertex array tutorial (feature not ported yet)
