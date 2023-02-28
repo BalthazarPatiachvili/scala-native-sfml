@@ -1,154 +1,160 @@
 package sfml
 package graphics
 
+import scala.collection.immutable.ArraySeq
+
 import scalanative.unsafe.*
 
+import internal.Type.sfBoolToBoolean
 import internal.graphics.Transform.*
+
 import system.Vector2
 
-//format: off
-final case class Transform private[sfml] (val matrix: Array[Float]):
+final class Transform private[sfml] (private val transform: ResourceBuffer[sfTransform]):
 
-    private[sfml] inline def toNativeTransform(using Zone): sfTransform =
-        val transform = alloc[sfTransform]()
+    private[sfml] inline def toNativeTransform: Ptr[sfTransform] = transform.ptr
 
-        for i <- 0 until 16 do transform(i) = matrix(i)
-        transform
+    def this() =
+        this(ResourceBuffer { (r: Ptr[sfTransform]) => ctor(r) })
 
-    def combine(rhs: Transform): Transform =
-        val a = matrix
-        val b = rhs.matrix
+    def this(a00: Float, a01: Float, a02: Float, a10: Float, a11: Float, a12: Float, a20: Float, a21: Float, a22: Float) =
+        this(ResourceBuffer { (r: Ptr[sfTransform]) =>
+            ctor(
+                r,
+                a00,
+                a01,
+                a02,
+                a10,
+                a11,
+                a12,
+                a20,
+                a21,
+                a22
+            )
+        })
 
-        val result = Transform(
-            a(0) * b(0)  + a(4) * b(1)  + a(12) * b(3),
-            a(0) * b(4)  + a(4) * b(5)  + a(12) * b(7),
-            a(0) * b(12) + a(4) * b(13) + a(12) * b(15),
-            a(1) * b(0)  + a(5) * b(1)  + a(13) * b(3),
-            a(1) * b(4)  + a(5) * b(5)  + a(13) * b(7),
-            a(1) * b(12) + a(5) * b(13) + a(13) * b(15),
-            a(3) * b(0)  + a(7) * b(1)  + a(15) * b(3),
-            a(3) * b(4)  + a(7) * b(5)  + a(15) * b(7),
-            a(3) * b(12) + a(7) * b(13) + a(15) * b(15)
-        )
+    final def combine(rhs: Transform): Transform =
+        Transform.toTransform(sfTransform_combine(toNativeTransform, rhs.toNativeTransform))()
 
-        for i <- 0 until 16 do matrix(i) = result.matrix(i)
-        result
+    final def matrix: ArraySeq[Float] =
+        val matrix = !toNativeTransform
 
-    def rotate(angle: Float): Transform =
-        val cos = math.cos(angle).toFloat
-        val sin = math.sin(angle).toFloat
+        ArraySeq.tabulate(16)(matrix(_))
 
-        combine(Transform(
-             cos, sin, 0,
-            -sin, cos, 0,
-             0,   0,   1
-        ))
+    final def rotate(angle: Float): Transform =
+        Transform.toTransform(sfTransform_rotate(toNativeTransform, angle))()
 
-    def rotate(angle: Float, centerX: Float, centerY: Float): Transform =
-        val rad = angle * math.Pi.toFloat / 180
-        val cos = math.cos(angle).toFloat
-        val sin = math.sin(angle).toFloat
+    final def rotate(angle: Float, centerX: Float, centerY: Float): Transform =
+        Transform.toTransform(sfTransform_rotate(toNativeTransform, angle, centerX, centerY))()
 
-        combine(Transform(
-             cos, -sin, centerX * (1 - cos) + centerY * sin,
-            -sin,  cos, centerY * (1 - cos) - centerX * sin,
-             0,    0,   1
-        ))
+    final def rotate(angle: Float, center: Vector2[Float]): Transform =
+        Zone { implicit z => Transform.toTransform(sfTransform_rotate(toNativeTransform, angle, center.toNativeVector2))() }
 
-    def rotate(angle: Float, center: Vector2[Float]): Transform =
-        rotate(angle, center.x, center.y)
+    final def scale(scaleX: Float, scaleY: Float): Transform =
+        Transform.toTransform(sfTransform_scale(toNativeTransform, scaleX, scaleY))()
 
-    def scale(scaleX: Float, scaleY: Float): Transform =
-        combine(Transform(
-            scaleX, 0,      0,
-            0,      scaleY, 0,
-            0,      0,      1
-        ))
+    final def scale(scaleX: Float, scaleY: Float, centerX: Float, centerY: Float): Transform =
+        Transform.toTransform(sfTransform_scale(toNativeTransform, scaleX, scaleY, centerX, centerY))()
 
-    def scale(factors: Vector2[Float]): Transform =
-        scale(factors.x, factors.y)
+    final def scale(factors: Vector2[Float]): Transform =
+        Zone { implicit z => Transform.toTransform(sfTransform_scale(toNativeTransform, factors.toNativeVector2))() }
 
-    def scale(scaleX: Float, scaleY: Float, centerX: Float, centerY: Float): Transform =
-        combine(Transform(
-            scaleX, 0,      centerX * (1 - scaleX),
-            0,      scaleY, centerY * (1 - scaleY),
-            0,      0,      1
-        ))
+    final def scale(factors: Vector2[Float], center: Vector2[Float]): Transform =
+        import internal.system.Vector2.sfVector2f
 
-    def scale(factors: Vector2[Float], center: Vector2[Float]): Transform =
-        scale(factors.x, factors.y, center.x, center.y)
+        Zone { implicit z =>
+            val sfFactors: Ptr[sfVector2f] = factors.toNativeVector2
+            val sfCenter: Ptr[sfVector2f] = center.toNativeVector2
 
-    def translate(x: Float, y: Float): Transform =
-        combine(Transform(
-            1, 0, x,
-            0, 1, y,
-            0, 0, 1
-        ))
+            Transform.toTransform(sfTransform_scale(toNativeTransform, sfFactors, sfCenter))()
+        }
 
-    def translate(offset: Vector2[Float]): Transform =
-        translate(offset.x, offset.y)
+    final def transformPoint(x: Float, y: Float): Vector2[Float] =
+        Zone { implicit z =>
+            Vector2.toVector2Float(toNativeTransform, x, y) { (data: Ptr[CStruct3[Ptr[sfTransform], CFloat, CFloat]]) =>
+                sfTransform_transformPoint(data._1, data._2, data._3)
+            }
+        }
 
-    def transformPoint(x: Float, y: Float): Vector2[Float] =
-        val transformedX = matrix(0) * x + matrix(4) * y + matrix(12)
-        val transformedY = matrix(1) * x + matrix(5) * y + matrix(13)
+    final def transformPoint(point: Vector2[Float]): Vector2[Float] =
+        import internal.system.Vector2.sfVector2f
 
-        Vector2(transformedX, transformedY)
+        Zone { implicit z =>
+            val sfPoint: Ptr[sfVector2f] = point.toNativeVector2
 
-    def transformPoint(point: Vector2[Float]): Vector2[Float] =
-        transformPoint(point.x, point.y)
+            Vector2.toVector2Float(toNativeTransform, sfPoint) { (data: Ptr[CStruct2[Ptr[sfTransform], Ptr[sfVector2f]]]) =>
+                sfTransform_transformPoint(data._1, data._2)
+            }
+        }
 
-    @SuppressWarnings(Array("org.wartremover.warts.Var"))
-    def transformRect(rectangle: Rect[Float]): Rect[Float] =
-        // Transform the 4 corners of the rectangle
-        val points = Array(
-            transformPoint(rectangle.left,                   rectangle.top),
-            transformPoint(rectangle.left,                   rectangle.top + rectangle.height),
-            transformPoint(rectangle.left + rectangle.width, rectangle.top),
-            transformPoint(rectangle.left + rectangle.width, rectangle.top + rectangle.height)
-        )
+    final def transformRect(rectangle: Rect[Float]): Rect[Float] =
+        import internal.graphics.Rect.sfFloatRect
 
-        // Compute the bounding rectangle of the transformed points
-        var left   = points(0).x
-        var top    = points(0).y
-        var right  = points(0).x
-        var bottom = points(0).y
+        Zone { implicit z =>
+            val sfRectangle: Ptr[sfFloatRect] = rectangle.toNativeRect
 
-        for i <- 1 until 4 do
-            if points(i).x < left   then left = points(i).x
-            if points(i).x > right  then right = points(i).x
-            if points(i).y < top    then top = points(i).y
-            if points(i).y > bottom then bottom = points(i).y
+            Rect.toRectFloat(toNativeTransform, sfRectangle) { (data: Ptr[CStruct2[Ptr[sfTransform], Ptr[sfFloatRect]]]) =>
+                sfTransform_transformRect(data._1, data._2)
+            }
+        }
 
-        Rect(left, top, right - left, bottom - top)
+    final def translate(x: Float, y: Float): Transform =
+        Transform.toTransform(sfTransform_translate(toNativeTransform, x, y))()
 
-    def *(rhs: Transform): Transform =
-        Transform(matrix.clone()).combine(rhs)
+    final def translate(offset: Vector2[Float]): Transform =
+        Zone { implicit z => Transform.toTransform(sfTransform_translate(toNativeTransform, offset.toNativeVector2))() }
 
-    def *=(rhs: Transform): Unit =
+    /* Operators */
+
+    override def equals(other: Any): Boolean =
+        other match
+            case other: Transform => sfTransform_eq_sfTransform(toNativeTransform, other.toNativeTransform)
+            case _                => false
+
+    final def *(rhs: Transform): Transform =
+        val transform = Transform()
+
+        for i <- 0 until 16 do transform.toNativeTransform(i) = this.matrix(i)
+
+        transform.combine(rhs)
+
+    final def *=(rhs: Transform): Transform =
         combine(rhs)
 
+    final def *(rhs: Vector2[Float]): Vector2[Float] =
+        import internal.system.Vector2.sfVector2f
+
+        Zone { implicit z =>
+            val sfVector: Ptr[sfVector2f] = rhs.toNativeVector2
+
+            Vector2.toVector2Float(toNativeTransform, sfVector) { (data: Ptr[CStruct2[Ptr[sfTransform], Ptr[sfVector2f]]]) =>
+                sfTransform_ml_sfVector2f(data._1, data._2)
+            }
+        }
+
 object Transform:
-    extension (transform: sfTransform)
-        private[sfml] def toTransform(): Transform =
-            val array = new Array[Float](16)
-
-            for i <- 0 until 16 do array(i) = transform(i)
-            Transform(array)
-
-    def apply(): Transform = Transform.Identity()
-
-    def apply(a00: Float, a01: Float, a02: Float, a10: Float, a11: Float, a12: Float, a20: Float, a21: Float, a22: Float): Transform =
-        Transform(Array(
-            a00, a10, 0, a20,
-            a01, a11, 0, a21,
-              0,   0, 1,   0,
-            a02, a12, 0, a22
-        ))
 
     def Identity(): Transform =
-        Transform(Array(
-            1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1
-        ))
+        Transform()
+
+    extension (transform: Immutable[Transform])
+        def matrix: ArraySeq[Float] = transform.get.matrix
+
+        def transformPoint(x: Float, y: Float): Vector2[Float] =
+            transform.get.transformPoint(x, y)
+
+        def transformPoint(point: Vector2[Float]): Vector2[Float] =
+            transform.get.transformPoint(point)
+
+        def transformRect(rectangle: Rect[Float]): Rect[Float] =
+            transform.get.transformRect(rectangle)
+
+    extension (transform: sfTransform)
+        private[sfml] def toTransform(): Transform =
+            Transform(ResourceBuffer { (r: Ptr[sfTransform]) =>
+                for i <- 0 until 16 do r(i) = transform(i)
+            })
+
+    extension (transform: Ptr[sfTransform])
+        private[sfml] def toTransform(): Transform =
+            Transform(ResourceBuffer(transform))

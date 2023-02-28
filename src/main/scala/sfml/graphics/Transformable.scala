@@ -6,12 +6,12 @@ import scalanative.unsafe.*
 import internal.graphics.Transformable.*
 import system.Vector2
 
-class Transformable private[sfml] (private val transformable: Resource[sfTransformable]):
+class Transformable private[sfml] (private val transformable: ResourceBuffer[sfTransformable]):
 
     private[sfml] inline def toNativeTransformable: Ptr[sfTransformable] = transformable.ptr
 
     def this() =
-        this(Resource { (r: Ptr[sfTransformable]) => ctor(r) })
+        this(ResourceBuffer { (r: Ptr[sfTransformable]) => ctor(r) })
 
     final def move(offsetX: Float, offsetY: Float): Unit =
         sfTransformable_move(toNativeTransformable, offsetX, offsetY)
@@ -68,3 +68,17 @@ class Transformable private[sfml] (private val transformable: Resource[sfTransfo
 
     final def inverseTransform(): Transform =
         Transform.toTransform(sfTransformable_getInverseTransform(toNativeTransformable))()
+
+object Transformable:
+    extension (transformable: Immutable[Transformable])
+        def origin: Vector2[Float] = transformable.get.origin
+
+        def position: Vector2[Float] = transformable.get.position
+
+        def rotation: Float = transformable.get.rotation
+
+        def scale: Vector2[Float] = transformable.get.scale
+
+        def transform: Transform = transformable.get.transform
+
+        def inverseTransform(): Transform = transformable.get.inverseTransform()

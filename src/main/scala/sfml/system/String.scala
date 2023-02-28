@@ -3,14 +3,15 @@ package system
 
 import scalanative.libc.stdlib.free
 import scalanative.unsafe.*
+import scalanative.unsigned.UnsignedRichInt
 
 import internal.system.String.*
 
 private[sfml] object String:
 
     extension (string: Ptr[sfString])
-        def close(): Unit =
-            free(string._1)
+        private[sfml] def close(): Unit =
+            stdlib.String.close(string)()
 
     extension (string: java.lang.String)
         private[sfml] def toNativeString(using Zone): Ptr[sfString] =

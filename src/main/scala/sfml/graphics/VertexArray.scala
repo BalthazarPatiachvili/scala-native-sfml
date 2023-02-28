@@ -1,12 +1,13 @@
 package sfml
 package graphics
 
-import scalanative.libc.stdlib.free
 import scalanative.unsafe.*
 
 import internal.graphics.VertexArray.*
 
+import stdlib.Vector
+
 object VertexArray:
     extension (vertexArray: Ptr[sfVertexArray])
         private[sfml] def close(): Unit =
-            free(vertexArray._2)
+            Vector.close(vertexArray.at2)()

@@ -7,15 +7,17 @@ import scalanative.unsigned.UnsignedRichInt
 import internal.Type.booleanToSfBool
 import internal.graphics.Sprite.*
 
-class Sprite private[sfml] (private val sprite: Resource[sfSprite]) extends Transformable(Resource(sprite.ptr.at2)) with Drawable:
+class Sprite private[sfml] (private val sprite: ResourceBuffer[sfSprite])
+    extends Transformable(ResourceBuffer(sprite.ptr.at2))
+    with Drawable:
 
     private[sfml] inline def toNativeSprite: Ptr[sfSprite] = sprite.ptr
 
     def this() =
-        this(Resource { (r: Ptr[sfSprite]) => ctor(r) })
+        this(ResourceBuffer { (r: Ptr[sfSprite]) => ctor(r) })
 
     def this(texture: Texture) =
-        this(Resource { (r: Ptr[sfSprite]) =>
+        this(ResourceBuffer { (r: Ptr[sfSprite]) =>
             Zone { implicit z => ctor(r, texture.toNativeTexture) }
         })
 
@@ -37,7 +39,7 @@ class Sprite private[sfml] (private val sprite: Resource[sfSprite]) extends Tran
 
         Rect(0, 0, width, height)
 
-    // NOTE: To be able to use [`font_=`]
+    // NOTE: To be able to use [`texture_=`]
     final def texture = ()
 
     final def texture_=(texture: Texture, resetRect: Boolean = false) =
@@ -48,3 +50,14 @@ class Sprite private[sfml] (private val sprite: Resource[sfSprite]) extends Tran
 
     final def textureRect_=(rect: Rect[Int]): Unit =
         Zone { implicit z => sfSprite_setTextureRect(toNativeSprite, rect.toNativeRect) }
+
+object Sprite:
+    extension (sprite: Immutable[Sprite])
+        def draw(target: RenderTarget, states: RenderStates): Unit =
+            sprite.get.draw(target, states)
+
+        def color: Color = sprite.get.color
+
+        def globalBounds: Rect[Float] = sprite.get.globalBounds
+
+        def localBounds: Rect[Float] = sprite.get.localBounds

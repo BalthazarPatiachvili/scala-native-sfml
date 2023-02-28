@@ -16,5 +16,6 @@ subsection:
       - page: graphics/drawing-2d-stuff.md
       - page: graphics/sprites-and-textures.md
       - page: graphics/text-and-fonts.md
+      - page: graphics/shapes.md
       - page: graphics/transforming-entities.md
       - page: graphics/controlling-camera-with-views.md

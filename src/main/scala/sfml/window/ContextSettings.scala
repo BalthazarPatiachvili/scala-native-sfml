@@ -8,11 +8,11 @@ import internal.Type.booleanToSfBool
 import internal.window.ContextSettings.*
 
 class ContextSettings(
-    val depth: Int = 0,
-    val stencil: Int = 0,
-    val antialiasing: Int = 0,
-    val major: Int = 1,
-    val minor: Int = 1,
+    val depthBits: Int = 0,
+    val stencilBits: Int = 0,
+    val antialiasingLevel: Int = 0,
+    val majorVersion: Int = 1,
+    val minorVersion: Int = 1,
     val attributeFlags: Int = 0,
     val sRgbCapable: Boolean = false
 ):
@@ -20,11 +20,11 @@ class ContextSettings(
     private[sfml] inline def toNativeContextSettings(using Zone): Ptr[sfContextSettings] =
         val contextSettings = alloc[sfContextSettings]()
 
-        contextSettings._1 = depth.toUInt
-        contextSettings._2 = stencil.toUInt
-        contextSettings._3 = antialiasing.toUInt
-        contextSettings._4 = major.toUInt
-        contextSettings._5 = minor.toUInt
+        contextSettings._1 = depthBits.toUInt
+        contextSettings._2 = stencilBits.toUInt
+        contextSettings._3 = antialiasingLevel.toUInt
+        contextSettings._4 = majorVersion.toUInt
+        contextSettings._5 = minorVersion.toUInt
         contextSettings._6 = attributeFlags.toUInt
         contextSettings._7 = sRgbCapable
         contextSettings

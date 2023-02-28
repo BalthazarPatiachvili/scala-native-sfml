@@ -9,7 +9,7 @@ import internal.window.Window.sfWindow
 import system.{String, Vector2}
 import window.{ContextSettings, VideoMode, Window}
 
-trait RenderTarget private[sfml] (private val renderTarget: Resource[sfRenderTarget]):
+trait RenderTarget private[sfml] (private val renderTarget: ResourceBuffer[sfRenderTarget]):
 
     private[sfml] inline def toNativeRenderTarget: Ptr[sfRenderTarget] = renderTarget.ptr
 
@@ -18,11 +18,14 @@ trait RenderTarget private[sfml] (private val renderTarget: Resource[sfRenderTar
             sfRenderTarget_clear(toNativeRenderTarget, color.toNativeColor)
         }
 
+    final def defaultView: Immutable[View] =
+        Immutable(View.toView(sfRenderTarget_getDefaultView(toNativeRenderTarget))())
+
     final def draw(drawable: Drawable, states: RenderStates = RenderStates()): Unit =
         drawable.draw(this, states)
 
     final def mapPixelToCoords(point: Vector2[Int]): Vector2[Float] =
-        mapPixelToCoords(point, View(Resource(sfRenderTarget_getView(toNativeRenderTarget))))
+        mapPixelToCoords(point, View(ResourceBuffer(sfRenderTarget_getView(toNativeRenderTarget))))
 
     final def mapPixelToCoords(point: Vector2[Int], view: View): Vector2[Float] =
         val viewport_rect = viewport(view)
@@ -33,9 +36,10 @@ trait RenderTarget private[sfml] (private val renderTarget: Resource[sfRenderTar
 
         view.inverseTransform().transformPoint(normalized)
 
-    final def view: Unit = ()
+    final def view: Immutable[View] =
+        Immutable(View.toView(sfRenderTarget_getView(toNativeRenderTarget))())
 
-    final def view_=(view: View): Unit =
+    final def view_=(view: Immutable[View]): Unit =
         sfRenderTarget_setView(toNativeRenderTarget, view.toNativeView)
 
     final def viewport(view: View): Rect[Int] =
@@ -56,3 +60,13 @@ object RenderTarget:
     private[sfml] def patch_draw(self: Ptr[sfDrawable], target: RenderTarget, states: RenderStates)(using Zone): Unit =
         // NOTE: Use this endpoint to avoid us splitting `states` in the stack
         sfRenderTarget_draw(target.toNativeRenderTarget, self, states.toNativeRenderStates)
+
+    extension (renderTarget: Immutable[RenderTarget])
+        def mapPixelToCoords(point: Vector2[Int]): Vector2[Float] =
+            renderTarget.get.mapPixelToCoords(point)
+
+        def mapPixelToCoords(point: Vector2[Int], view: View): Vector2[Float] =
+            renderTarget.get.mapPixelToCoords(point, view)
+
+        def viewport(view: View): Rect[Int] =
+            renderTarget.get.viewport(view)

@@ -13,10 +13,10 @@ import system.Vector2
     def sfMouse_isButtonPressed(button: CInt): Type.sfBool = extern
 
     @name("_ZN2sf5Mouse11getPositionEv")
-    def sfMouse_getPosition(): Type.sfSplit[Vector2.sfVector2i] = extern
+    def sfMouse_getPosition(): Vector2.sfVector2i = extern
 
     @name("_ZN2sf5Mouse11getPositionERKNS_6WindowE")
-    def sfMouse_getPosition(relativeTo: Ptr[Window.sfWindow]): Type.sfSplit[Vector2.sfVector2i] = extern
+    def sfMouse_getPosition(relativeTo: Ptr[Window.sfWindow]): Vector2.sfVector2i = extern
 
     @name("_ZN2sf5Mouse11setPositionERKNS_7Vector2IiEE")
     def sfMouse_setPosition(position: Vector2.sfVector2i): Unit = extern

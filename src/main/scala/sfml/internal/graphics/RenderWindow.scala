@@ -18,4 +18,4 @@ import window.{ContextSettings, VideoMode, Window}
     def dtor(self: Ptr[sfRenderWindow]): Unit = extern
 
     @name("_ZNK2sf12RenderWindow7getSizeEv")
-    def sfRenderWindow_getSize(self: Ptr[sfRenderWindow]): Type.sfSplit[Vector2.sfVector2u] = extern
+    def sfRenderWindow_getSize(self: Ptr[sfRenderWindow]): Vector2.sfVector2i = extern

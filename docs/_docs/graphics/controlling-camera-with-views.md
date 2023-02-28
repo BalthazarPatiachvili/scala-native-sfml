@@ -150,7 +150,7 @@ rendered in a small area in a corner of the window. The area in which the
 contents of the view is shown is called the viewport.
 
 To set the viewport of a view, you can use the
-[`viewport`](sfml.graphics.View.viewport_=) setter. 
+[`viewport`](sfml.graphics.View.viewport_=) setter.
 ```scala
 //{
 import sfml.graphics.{Rect, View}
@@ -169,7 +169,7 @@ pixels, but instead as a ratio of the window size. This is more convenient: It
 allows you to not have to track resize events in order to update the size of the
 viewport every time the size of the window changes. It is also more intuitive:
 You would probably define your viewport as a fraction of the entire window area
-anyway, not as a fixed-size rectangle. 
+anyway, not as a fixed-size rectangle.
 
 Using a viewport, it is straightforward to split the screen for multiplayer games:
 ```scala
@@ -213,9 +213,10 @@ minimapView.viewport = (0.75, 0.0, 0.25, 0.25)
 To draw something using a view, you must draw it after updating `view` setter of
 the target to which you are drawing
 ([`RenderWindow`](sfml.graphics.RenderWindow.view_=)).
-<!-- TODO: Add_sf::RenderTexture --> 
+<!-- TODO: Add_sf::RenderTexture -->
 ```scala
 //{
+import sfml.Immutable
 import sfml.graphics.{Rect, RenderWindow, Sprite, View}
 import sfml.window.VideoMode
 
@@ -227,28 +228,46 @@ val some_sprite = Sprite()
 val view = View((0, 0, 1000, 600))
 
 // activate it
-window.view = view
+window.view = Immutable(view)
 
 // draw something to that view
 window.draw(some_sprite);
+
+// want to do visibility checks? retrieve the view
+val currentView = window.view
 ```
-<!-- TODO: Retrieve the view -->
 
 The view remains active until you set another one. This means that there is
 always a view which defines what appears in the target, and where it is drawn.
 If you don't explicitly set any view, the render-target uses its own default
 view, which matches its size 1:1. You can get the default view of a
-render-target with the `defaultView` function (feature not ported yet). This can
-be useful if you want to define your own view based on it, or restore it to draw
-fixed entities (like a GUI) on top of your scene. 
-<!-- TODO: Example with getDefaultView -->
+render-target with the [`defaultView`](sfml.graphics.RenderTarget.defaultView)
+getter. This can be useful if you want to define your own view based on it, or
+restore it to draw fixed entities (like a GUI) on top of your scene.
+```scala
+//{
+import sfml.Immutable
+import sfml.graphics.{Rect, RenderWindow, Sprite, View}
+import sfml.window.VideoMode
+
+val window = RenderWindow(VideoMode(800, 600), "My window")
+
+//}
+// create a view half the size of the default view
+val view = window.defaultView.clone()
+view.zoom(0.5)
+window.view = Immutable(view)
+
+// restore the default view
+window.view = window.defaultView
+```
 
 <div class="warning">
 When you use <code>view</code> setter, the render-target makes a copy of the
 view, and doesn't store a pointer to the one that is passed. This means that
 whenever you update your view, you need to use <code>view</code> setter again to
 apply the modifications. Don't be afraid to copy views or create them on the
-fly, they aren't expensive objects (they just hold a few floats). 
+fly, they aren't expensive objects (they just hold a few floats).
 </div>
 
 
@@ -256,13 +275,14 @@ fly, they aren't expensive objects (they just hold a few floats).
 
 Since the default view never changes after the window is created, the viewed
 contents are always the same. So when the window is resized, everything is
-squeezed/stretched to the new size. 
+squeezed/stretched to the new size.
 
 If, instead of this default behavior, you'd like to show more/less stuff
 depending on the new size of the window, all you have to do is update the size
-of the view with the size of the window. 
+of the view with the size of the window.
 ```scala
 //{
+import sfml.Immutable
 import sfml.graphics.{Rect, RenderWindow, View}
 import sfml.window.{Event, VideoMode}
 
@@ -272,8 +292,9 @@ val window = RenderWindow(VideoMode(800, 600), "My window")
 // the event loop
 for event <- window.pollEvent() do
     event match
-        case Event.Resized(width, height) => 
-            window.view = View((0, 0, width, height))
+        case Event.Resized(width, height) =>
+            window.view = Immutable(View((0, 0, width, height)))
+        case _ => ()
 ```
 
 

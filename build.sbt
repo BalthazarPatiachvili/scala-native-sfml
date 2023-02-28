@@ -4,7 +4,7 @@ name := "scala-native-sfml"
 organization := "io.github.lafeychine"
 
 scalaVersion := "3.2.2"
-version := "0.3.7"
+version := "0.5.1"
 
 enablePlugins(ScalaNativePlugin)
 
@@ -21,13 +21,17 @@ Compile / doc / scalacOptions ++= Seq("-siteroot", "docs", "-skip-by-id:sfml.int
 SiteScaladoc / siteSubdirName := ""
 
 /* Linting */
-ThisBuild / wartremoverErrors := Warts.allBut(
+val builtinWarts = Warts.allBut(
     Wart.AsInstanceOf,
     Wart.DefaultArguments,
+    Wart.Equals,
     Wart.ImplicitConversion,
     Wart.ImplicitParameter,
-    Wart.Overloading
-) ++ Seq(
+    Wart.Overloading,
+    Wart.TryPartial
+)
+
+val communityWarts = Seq(
     ContribWart.Apply,
     ContribWart.MissingOverride,
     ContribWart.NoNeedForMonad,
@@ -35,6 +39,12 @@ ThisBuild / wartremoverErrors := Warts.allBut(
     ContribWart.SomeApply,
     ContribWart.SymbolicName
 )
+
+Compile / compile / wartremoverErrors :=
+    builtinWarts ++ communityWarts ++ Seq(Wart.TryPartial)
+
+Test / compile / wartremoverErrors :=
+    builtinWarts ++ communityWarts
 
 /* Testing */
 addCompilerPlugin("org.scala-native" % "junit-plugin" % "0.4.10" cross CrossVersion.full)

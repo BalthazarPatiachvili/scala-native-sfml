@@ -12,14 +12,14 @@ import system.String.toNativeString
 import system.Vector2
 import window.{ContextSettings, Style, VideoMode, Window}
 
-class RenderWindow private[sfml] (private val renderWindow: Resource[sfRenderWindow])
-    extends Window(Resource(renderWindow.ptr.at1))
-    with RenderTarget(Resource(renderWindow.ptr.at2)):
+class RenderWindow private[sfml] (private val renderWindow: ResourceBuffer[sfRenderWindow])
+    extends Window(ResourceBuffer(renderWindow.ptr.at1))
+    with RenderTarget(ResourceBuffer(renderWindow.ptr.at2)):
 
     private[sfml] inline def toNativeRenderWindow: Ptr[sfRenderWindow] = renderWindow.ptr
 
     def this(mode: VideoMode, title: String, style: Style, settings: ContextSettings) =
-        this(Resource { (r: Ptr[sfRenderWindow]) =>
+        this(ResourceBuffer { (r: Ptr[sfRenderWindow]) =>
             Zone { implicit z =>
                 val modeSplit = split(mode.toNativeVideoMode)
 
@@ -34,4 +34,11 @@ class RenderWindow private[sfml] (private val renderWindow: Resource[sfRenderWin
         this(mode, title, Style.Default)
 
     override def size: Vector2[Int] =
-        Zone { implicit z => Vector2.toVector2Int(sfRenderWindow_getSize(toNativeRenderWindow))() }
+        Zone { implicit z =>
+            Vector2.toVector2Int(toNativeRenderWindow) { (data: Ptr[CStruct1[Ptr[sfRenderWindow]]]) =>
+                sfRenderWindow_getSize(data._1)
+            }
+        }
+
+object RenderWindow:
+    extension (renderWindow: Immutable[RenderWindow]) def size: Vector2[Int] = renderWindow.get.size

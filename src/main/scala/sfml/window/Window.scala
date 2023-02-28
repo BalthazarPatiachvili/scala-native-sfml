@@ -10,7 +10,7 @@ import internal.window.Window.*
 
 import system.String.toNativeString
 
-class Window private[sfml] (private val window: Resource[sfWindow]) extends AutoCloseable:
+class Window private[sfml] (private val window: ResourceBuffer[sfWindow]) extends Resource:
 
     private[sfml] inline def toNativeWindow: Ptr[sfWindow] = window.ptr
 
@@ -18,7 +18,7 @@ class Window private[sfml] (private val window: Resource[sfWindow]) extends Auto
         sfWindow_close(toNativeWindow)
 
     def this(mode: VideoMode, title: String, style: Style, settings: ContextSettings) =
-        this(Resource { (r: Ptr[sfWindow]) =>
+        this(ResourceBuffer { (r: Ptr[sfWindow]) =>
             Zone { implicit z =>
                 val modeSplit = split(mode.toNativeVideoMode)
 
@@ -57,7 +57,6 @@ class Window private[sfml] (private val window: Resource[sfWindow]) extends Auto
     final def mouseCursorVisible_=(visible: Boolean) =
         sfWindow_setMouseCursorVisible(toNativeWindow, visible)
 
-    @SuppressWarnings(Array("org.wartremover.warts.OptionPartial"))
     final def pollEvent(): LazyList[Event] =
         def polling(event: Ptr[sfEvent]): Option[Event] =
             if sfWindow_pollEvent(toNativeWindow, event) then { Event(event) }
@@ -66,7 +65,10 @@ class Window private[sfml] (private val window: Resource[sfWindow]) extends Auto
         Zone { implicit z =>
             val event = alloc[sfEvent]()
 
-            LazyList.continually(polling(event)).takeWhile(_.isDefined).map(_.get)
+            LazyList.unfold(polling(event)) {
+                case Some(e) => Option(e -> polling(event))
+                case None    => None
+            }
         }
 
     // NOTE: To be able to use [`verticalSync_=`]

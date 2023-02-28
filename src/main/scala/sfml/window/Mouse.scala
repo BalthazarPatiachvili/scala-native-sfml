@@ -25,10 +25,16 @@ object Mouse:
         case HorizontalWheel
 
     def position: Vector2[Int] =
-        Vector2.toVector2Int(sfMouse_getPosition())()
+        Zone { implicit z => Vector2.toVector2Int() { () => sfMouse_getPosition() } }
 
     def position(relativeTo: Window): Vector2[Int] =
-        Zone { implicit z => Vector2.toVector2Int(sfMouse_getPosition(relativeTo.toNativeWindow))() }
+        import internal.window.Window.sfWindow
+
+        Zone { implicit z =>
+            Vector2.toVector2Int(relativeTo.toNativeWindow) { (data: Ptr[CStruct1[Ptr[sfWindow]]]) =>
+                sfMouse_getPosition(data._1)
+            }
+        }
 
     def position_=(position: Vector2[Int]): Unit =
         Zone { implicit z => sfMouse_setPosition(position.toNativeVector2) }

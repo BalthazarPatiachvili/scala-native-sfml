@@ -12,7 +12,7 @@ private[sfml] object String:
 
     extension (string: Ptr[stdString])
         private[sfml] def close(): Unit =
-            free(string._1)
+            dtor(string)
 
     private inline def convert(ansiString: java.lang.String, charSize: Int)(using Zone): Ptr[stdString] =
         val string = alloc[stdString]()

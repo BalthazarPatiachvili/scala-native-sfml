@@ -23,6 +23,9 @@ import system.Vector2
     @name("_ZN2sf12RenderTarget4drawERKNS_8DrawableERKNS_12RenderStatesE")
     def sfRenderTarget_draw(self: Ptr[sfRenderTarget], drawable: Ptr[Drawable.sfDrawable], states: Ptr[RenderStates.sfRenderStates]): Unit = extern
 
+    @name("_ZNK2sf12RenderTarget14getDefaultViewEv")
+    def sfRenderTarget_getDefaultView(self: Ptr[sfRenderTarget]): Ptr[View.sfView] = extern
+
     @name("_ZNK2sf12RenderTarget7getViewEv")
     def sfRenderTarget_getView(self: Ptr[sfRenderTarget]): Ptr[View.sfView] = extern
 
