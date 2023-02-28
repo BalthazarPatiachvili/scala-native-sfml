@@ -18,7 +18,7 @@ import sfml.ReturnTypeHandler
     def sfVector2i_typeHandler(self: Ptr[sfVector2i], callback: ReturnTypeHandler.callback, args: ReturnTypeHandler.args): Unit = extern
 
     @name("_Z21glue_inlinesfVector2fRN2sf7Vector2IfEE")
-    def sfVector2f_inlineHandler(self: Ptr[sfVector2f]): Ptr[sfVector2f] = extern
+    def sfVector2f_inlineHandler(self: Ptr[sfVector2f]): sfVector2f = extern
 
     @name("_Z21glue_inlinesfVector2iRN2sf7Vector2IiEE")
-    def sfVector2i_inlineHandler(self: Ptr[sfVector2i]): Ptr[sfVector2i] = extern
+    def sfVector2i_inlineHandler(self: Ptr[sfVector2i]): sfVector2i = extern
